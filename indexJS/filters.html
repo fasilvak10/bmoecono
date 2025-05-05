@@ -1,0 +1,46 @@
+<script>
+  function populateUniqueOptions(selectElement, data, key, options = {}) {
+    if (!(selectElement instanceof HTMLSelectElement)) {
+      throw new TypeError('El primer argumento debe ser un elemento select');
+    }
+
+    const {
+      includeAll = false,
+      allText = "Todos",
+      formatter = (value) => value,
+      sortAlphabetically = true
+    } = options;
+
+    const uniqueValues = Array.from(new Set(data.map(item => item[key])))
+      .filter(value => value != null);
+
+    if (sortAlphabetically) {
+      uniqueValues.sort((a, b) => {
+        if (typeof a === 'string' && typeof b === 'string') {
+          return a.localeCompare(b);
+        }
+        return 0; // No ordenar si no son strings
+      });
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    if (includeAll) {
+      const optionAll = document.createElement("option");
+      optionAll.textContent = allText;
+      fragment.appendChild(optionAll);
+    }
+
+    for (const value of uniqueValues) {
+      const option = document.createElement("option");
+      option.textContent = formatter(value);
+      option.value = value;
+      fragment.appendChild(option);
+    }
+
+    selectElement.innerHTML = '';
+    selectElement.appendChild(fragment);
+  }
+
+  
+</script>

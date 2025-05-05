@@ -1,0 +1,356 @@
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasRight"
+  aria-labelledby="offcanvasRightLabel">
+
+  <div class="offcanvas-header">
+    <h1 class="modal-title fs-5 pe-3" id="tipoTramite">Inscripcion</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+
+  <div class="offcanvas-body border border-bottom" style="font-size: 0.8em; overflow-x: hidden;">
+    <div class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center w-100">
+
+
+      <div id="" class="justify-content-center text-center">
+        <h2 id="nombreEmpresa" class="mb-3">Empresa</h2>
+        <!-- <hr class="d-flex"> -->
+        <!--         <div class="d-flex justify-content-around">
+        <input type="number" class="bt-2" id="cuit" name="cuit" hidden>cuit</p>
+        <input type="text" id="expediente" name="expediente" hidden>expediente</p>
+          <p id="periodoTramite">periodo</p>
+        </div>
+        <div class="d-flex justify-content-around">
+          <p id="fechaPresentacion">fecha presentacion</p>
+          <p id="evaluador">evaluador</p>
+          <p id="asesorLegal">asesorLegal</p> 
+        </div> -->
+      </div>
+
+      <form class="mt-2" name="crearUsuario" id="crearUsuario" style="text-center">
+
+        <input type="text" class="form-control" placeholder="#" aria-label="empresaID" name="empresaID" id="empresaID" hidden>
+        <input type="tezt" class="bt-2" id="cuit" name="cuit" hidden>cuit</p>
+        <input type="text" id="expediente" name="expediente" hidden>expediente</p>
+
+        <div class="form-floating form-control-sm">
+          <select class="form-select" aria-label="actividad" id="actividad" name="actividad">
+              <option value="Software y servicios informáticos y digitales">Software y servicios informáticos y digitales</option>
+              <option value="Biotecnología">Biotecnología</option>
+              <option value=""></option>
+            </select>
+          <label for="actividad">Actividad Principal</label>
+        </div>
+
+
+        <div class="row g-2 mt-2" id="">
+          <div class="col-md">
+            <div class="form-floating form-control-sm ">
+              <input type="month" class="form-control" id="periodoIncial" name="periodoIncial" >
+              <label for="periodoIncial">Periodo Inicio </label>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-floating form-control-sm ">
+              <input type="month" class="form-control" id="periodoFinal" name="periodoFinal" >
+              <label for="periodoFinal">Periodo Final</label>
+            </div>
+          </div>
+        </div>
+
+
+        <div id="conciliacionesHidden" hidden>
+          <p class="ps-3 text-center">Conciliaciones</p>
+          <div class="form-floating form-control-sm">
+            <input type="text" class="form-control" id="conciTasa" aria-label="conciTasa" name="conciTasa" disabled >
+            <label for="conciTasa">Conciliación Tasa</label>
+          </div>
+
+          <div class="form-floating form-control-sm">
+            <input type="text" class="form-control form-control-sm" id="conciFonpec" aria-label="conciFonpec" name="conciFonpec" disabled >
+            <label for="conciFonpec">Conciliación Fonpec</label>
+          </div>
+        </div>
+
+        <div class="row g-1 mt-2">
+
+          <div class="col-md">
+            <div class="form-floating form-control-sm">
+              <select class="form-select mb-3" aria-label="estadoEmpresa" id="estadoEmpresa" name="estadoEmpresa">
+                  <option value="Informe Técnico Firmado">Informe Técnico Firmado</option>
+                  <option value="Providencia Notificada">Providencia Notificada</option>
+                  <option value="Sin evaluar">Sin evaluar</option>
+                  <option value="En Revisión">En Revisión</option>
+                  <option value=""></option>
+                </select>
+              <label for="estadoEmpresa">Estado</label>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="form-floating form-control-sm">
+              <select class="form-select "  aria-label="tamanio" id="tamanio" name="tamanio">
+                    <option value=""></option>
+                    <option value="Micro">Micro</option>
+                    <option value="Pequeña">Pequeña</option>
+                    <option value="Mediana">Mediana</option> 
+                    <option value="Grande">Grande</option>
+                  </select>
+              <label for="tamanio">Tamaño</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-1 mb-2 hidden" id="subsaHidden">
+          <div class="col-md">
+            <div class="form-floating form-control-sm ">
+              <input type="date" class="form-control" id="fechaSubsanacion" name="fechaSubsanacion" required>
+              <label for="fechaSubsanacion">Fecha Subsanación </label>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-floating form-control-sm ">
+              <input type="number" class="form-control" id="cantidadDias" name="cantidadDias" required>
+              <label for="cantidadDias">Cantidad Dias</label>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-floating form-control-sm mb-3" hidden>
+          <select class="form-select mb-3"  aria-label="conclusion" id="conclusion" name="conclusion">
+                    <option value=""></option>
+                    <option value="Sin información">Sin información</option>
+                    <option value="Ajuste monetario">Ajuste monetario</option>
+                    <option value="Suspension">Suspension</option>
+                    <option value="Sin Observaciones">Sin Observaciones</option>
+                    <option value="Baja de personal">Baja de personal</option>
+
+
+                  </select>
+          <label for="conclusion" >Conclusion Auditoria</label>
+        </div>
+
+        <div class="row g-1 mb-2">
+          <div class="col-md">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="masaSalarial" name="masaSalarial">
+              <label for="">Masa Salarial Promovida</label>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="form-floating form-control-sm">
+              <input type="number" class="form-control" id="nomina" name="nomina" >
+              <label for="">Nómina Promovida</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-md-12">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="ventasTotales" name="ventasTotales">
+              <label for="ventasTotales">Ventas Totales</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-md-12">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="ventasPromo" name="ventasPromo" onchange="calcularPorcentajeExpo(this.value, document.getElementById('exportaciones').value, document.getElementById('porcentajeExpoCalculado'))">
+              <label for="ventasPromo">Ventas Promovidas</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-md-12">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="exportaciones" name="exportaciones" onchange="calcularPorcentajeExpo(document.getElementById('ventasPromo').value, this.value, document.getElementById('porcentajeExpoCalculado'))">
+              <label for="exportaciones">Exportaciones Promovidas</label>
+            </div>
+          </div>
+        </div>
+
+        <div id="porcentajeExpoCalculado" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
+
+        <div id="expobienal-hidden" class="row g-2 mb-2" hidden>
+
+          <p class="text-center">Ventas y Exportaciones Segundo Año</p>
+          <div class="col-md-12">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="ventasanio02" name="ventasanio02">
+              <label for="ventasanio02">Ventas Año 2</label>
+            </div>
+          </div>
+
+
+          <div class="col-md-12">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="ventasPromoanio2" name="ventasPromoanio2" onchange="calcularPorcentajeExpo(this.value, document.getElementById('exportacionesanio2').value, document.getElementById('porcentajeExpoCalculadoAnio2'))">
+              <label for="ventasPromoanio2">Ventas Promovidas Año 2</label>
+            </div>
+          </div>
+
+
+          <div class="col-md-12">
+            <div class="form-floating form-control-sm">
+              <input type="text" class="form-control" id="exportacionesanio2" name="exportacionesanio2" onchange="calcularPorcentajeExpo(document.getElementById('ventasPromoanio2').value, this.value, document.getElementById('porcentajeExpoCalculadoAnio2'))">
+              <label for="exportacionesanio2">Exportaciones Promovidas Año 2</label>
+            </div>
+          </div>
+
+          <div id="porcentajeExpoCalculadoAnio2" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
+        </div>
+
+        <div id="requisitosAdicionales" hidden>
+
+          <p class="text-center">Requisitos Adicionales</p>
+          <div class="row g-2 mb-2">
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="capacitacion" name="capacitacion">
+                <label for="capacitacion">Inversión en Capacitación</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2">
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="imasd" name="imasd">
+                <label for="imasd">Inversión en I+D</label>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-floating form-control-sm mb-2">
+            <select class="form-select"  aria-label="calidadTipo" id="calidadTipo" name="calidadTipo">
+                    <option value=""></option>
+                    <option value="Certificación de Calidad por Competencia del Personal afectados a actividades promovidas">Certificación de Calidad por Competencia del Personal afectados a actividades promovidas</option>
+                    <option value="Certificación de Norma de Calidad">Certificación de Norma de Calidad</option>
+                    <option value="Sin Información">Sin Información</option>
+                    <option value="Plan de Mejora Continua">Plan de Mejora Continua</option>
+                    <option value="No">No</option>
+                    <option value="Si">Si</option>
+
+
+                  </select>
+            <label for="calidadTipo" >Tipo de Calidad</label>
+          </div>
+
+          <div class="form-floating form-control-sm mb-2">
+            <select class="form-select"  aria-label="calidadEstado" id="calidadEstado" name="calidadEstado">
+                    <option value=""></option>
+                    <option value="En proceso">En proceso</option>
+                    <option value="Implementada">Implementada</option>
+                    <option value="Sin información">Sin información</option>
+
+                  </select>
+            <label for="calidadEstado" >Estado Calidad</label>
+          </div>
+
+        </div>
+
+
+
+        <div class="form-check form-switch form-check-reverse mb-3">
+          <input class="form-check-input" type="checkbox" id="flexRevisionLegal" onchange="updateTimestamp(this, document.getElementById('fechaRevisionLegal'),document.getElementById('revisorRealLegal'))">
+          <label class="form-check-label" for="flexRevisionLegal">Revisado Abogado/a</label>
+          <div class="d-flex flex-row-reverse">
+            <div id="revisorRealLegal" name="revisorRealLegal" class="form-text ms-1"></div>
+            <div id="asesorLegal" name="asesorLegal" class="form-text"></div>
+          </div>
+          <div id="fechaRevisionLegal" class="form-text"></div>
+
+        </div>
+
+        <div class="form-check form-switch form-check-reverse mb-3">
+          <input class="form-check-input" type="checkbox" id="flexRevisionFinal" onchange="updateTimestamp(this, document.getElementById('fecha1278now'), document.getElementById('revisorRealFinal'))">
+          <label class="form-check-label" for="flexRevisionFinal">Revisado Final</label>
+          <div class="d-flex flex-row-reverse">
+            <div id="revisorRealFinal" name="revisorRealFinal" class="form-text ms-1"></div>
+            <div id="revisorFinal" name='revisorFinal' class="form-text"></div>
+          </div>
+          <div id="fecha1278now" name='fecha1278now' class="form-text"></div>
+        </div>
+
+        <div class="form-floating form-control-sm mb-2">
+          <input type="text" class="form-control" id="iftecnico" name="iftecnico" >
+          <label for="iftecnico">IF Informe Tecnico</label>
+        </div>
+
+        <div class="row g-1 mb-3">
+          <div class="col-md">
+            <div class="col form-floating form-control-sm">
+              <input type="text" class="form-control" id="provi" name="provi" >
+              <label id="actoOprovi" for="provi">Providencia</label>
+            </div>
+          </div>
+          <div id="hiddenNumActo" class="col-3">
+            <div class="col form-floating form-control-sm">
+              <input type="text" class="form-control" id="numacto" name="numacto" >
+              <label for="numacto">Número</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div id="hiddenActo" class="col-md">
+            <div class="col form-floating form-control-sm">
+              <input type="date" class="form-control" id="fechaActo" name="fechaActo" >
+              <label for="fechaActo">Fecha Acto</label>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-floating form-control-sm">
+              <input type="date" class="form-control" id="fechaProvi" name="fechaProvi" >
+              <label for="fechaProvi">Fecha Notificacion </label>
+            </div>
+          </div>
+          <div id="hiddenFechaInscripcion" class="col-md">
+            <div class="col form-floating form-control-sm">
+              <input type="date" class="form-control" id="fechaInscripcion" name="fechaInscripcion" >
+              <label id="labelFechaInscripcion" for="fechaInscripcion">Fecha Inscripción</label>
+            </div>
+          </div>
+        </div>
+
+        <div id="" class="form-check form-switch form-check-reverse mb-3">
+          <input class="form-check-input" type="checkbox" id="flex-emision" onchange="updateTimestamp(this, document.getElementById('flex-dato-emision'))">
+          <label class="form-check-label" for="flex-emision">Disponible para Emisión</label>
+          <div id="flex-dato-emision" name='flex-dato-emision' class="flex-dato-emision"></div>
+        </div>
+
+        <div id="hidden-1266" class="form-check form-switch form-check-reverse mb-3">
+          <input class="form-check-input" type="checkbox" id="flex-afip" onchange="updateTimestamp(this, document.getElementById('flex-dato-afip'))">
+          <label class="form-check-label" for="flex-afip">Informado AFIP</label>
+          <div id="flex-dato-afip" name='flex-dato-afip' class="flex-dato-afip"></div>
+        </div>
+
+        <div class="form-floating form-control-sm mb-2">
+          <textarea type="text" class="form-control" id="observaciones" name="observaciones" style="height: 100px"></textarea>
+          <label for="observaciones">Observaciones</label>
+        </div>
+
+      </form>
+
+
+    </div>
+
+  </div>
+
+  <div class="offcanvas-footer p-4 d-flex row align-items-center g-2" style="font-size: 0.8em">
+    <button type="button" class="btn btn-sm btn-primary" onclick="validarFormulario()" id="guardarUsuario0">Guardar</button>
+    <button class="btn btn-primary d-none btnLoading" type="button"     disabled id="LoadingButton0" >
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Loading...
+        </button>
+    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" id="" role="button" onclick="crearArchivos(document.getElementById('crearUsuario'))"> <i class="bi bi-layers-fill"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" onclick="abrirEnlace(this)" id="carpetaEmpresaAcceso" href="https://lanacion.com"><i class="bi bi-folder-fill button-folder" role="button" ></i></button>
+  </div>
+
+  <div class="resize-bar"></div> <!-- Barra de arrastre -->
+</div>

@@ -1,0 +1,195 @@
+<!-- Función ECONOCIMIENTO Header -->
+<script>
+  $(document).ready(function() {
+    const words = ['software', 'servicios', 'audiovisual', 'biotecnología', 'nanotecnología', 'aeroespacial', 'satelital', 'industria', 'ingenierías', 'creación de empleo', 'exportaciones', 'talento', ' '];
+    const typed = new Typed('#typing', {
+      strings: words,
+      typeSpeed: 50,
+      backSpeed: 50,
+      backDelay: 10000,
+      loop: true,
+      cursorColor: '#0057ff',
+    });
+
+    let isPaused = false;
+
+    $('h1[role="button"]').on('click', function() {
+      isPaused ? typed.start() : typed.stop();
+      $(this).attr('aria-pressed', isPaused);
+      isPaused = !isPaused;
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const navbar = document.querySelector('.navbar');
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          navbar.classList.add('navbar-blur');
+        } else {
+          navbar.classList.remove('navbar-blur');
+        }
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(document.body);
+    
+    
+  });
+
+  function abrirEnlace(element) {
+    var enlace = element.getAttribute('href');
+    window.open(enlace, '_blank');
+  }
+
+
+  // Agregar animación al hover
+  const iconLink = document.querySelector('.icon-link-hover');
+  iconLink.addEventListener('mouseover', () => {
+    iconLink.style.transform = 'translateY(-10px)';
+  });
+  iconLink.addEventListener('mouseout', () => {
+    iconLink.style.transform = 'translateY(0)';
+  });
+  
+
+  function toggleInfo(event) {
+    if(event) { 
+      event.preventDefault()
+    }
+
+    const spinner = document.getElementById('spinnerMainCharacter');
+    spinner.hidden = false;
+    const infoBubble = document.getElementById('infoBubble');
+    if (!infoBubble.hidden) infoBubble.hidden = true;
+    const geminiRest = document.getElementById('geminiRest');
+
+    google.script.run.withSuccessHandler((respuesta) => {
+        console.log(respuesta);
+        spinner.hidden = true;
+
+        // Limpiar el contenido anterior y aplicar el efecto de tipeo
+        infoBubble.hidden = false;
+        geminiRest.innerHTML = ''; 
+
+        new Typed('#geminiRest', {
+          strings: [respuesta],
+          typeSpeed: 50,         // Velocidad de tipeo
+          backSpeed: 25,         // Velocidad de retroceso (si aplica)
+          showCursor: false,     // Ocultar el cursor de tipeo
+          loop: false,           // Evitar repetir el texto
+          onComplete: () => {
+            // Mostrar el contenedor una vez terminado el tipeo
+          
+        }
+      });
+
+    }).geminiAPI();
+  }
+
+
+  function launchConfetti() {
+    const duration = 3 * 1000; // Duración en milisegundos (3 segundos)
+    const end = Date.now() + duration;
+
+    // Función que lanza confeti repetidamente
+    (function frame() {
+      // Lanza confeti en una ráfaga
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+
+      // Continuar lanzando confeti mientras dure el tiempo
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })
+  ();
+}
+
+  // Función para animar el contador
+  function animateCounter(element, start, end, duration) {
+      let startTime = null;
+
+      function step(currentTime) {
+          if (!startTime) startTime = currentTime;
+          const progress = Math.min((currentTime - startTime) / duration, 1);
+          element.innerText = Math.floor(progress * (end - start) + start);
+          if (progress < 1) {
+              requestAnimationFrame(step);
+          }
+      }
+
+      requestAnimationFrame(step);
+  }
+
+  // Función para detectar si el elemento está en la vista
+  function isElementInViewport(el) {
+      const rect = el.getBoundingClientRect();
+      return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+  }
+
+  // Activar el contador cuando el usuario hace scroll
+  document.addEventListener('scroll', () => {
+      document.querySelectorAll('.counter').forEach((counter) => {
+          if (isElementInViewport(counter) && !counter.classList.contains('counted')) {
+              counter.classList.add('counted');
+              animateCounter(counter, 0, parseInt(counter.dataset.target), 2000); // 2000 ms para la duración
+          }
+      });
+  });
+
+
+  /*FUNTION AJUSTE DE PAGINA*/
+
+  const offcanvas = document.getElementById('offcanvasRight');
+  const resizeBar = offcanvas.querySelector('.resize-bar');
+  let isDragging = false;
+
+  resizeBar.addEventListener('mousedown', () => {
+      isDragging = true;
+      document.addEventListener('mousemove', resize);
+      document.addEventListener('mouseup', () => {
+          isDragging = false;
+          document.removeEventListener('mousemove', resize);
+      });
+  });
+
+  function resize(event) {
+      if (isDragging) {
+          const newWidth = window.innerWidth - event.clientX;
+          if (newWidth >= 200 && newWidth <= window.innerWidth / 2) { // Limitar el redimensionamiento
+              offcanvas.style.width = newWidth + 'px';
+          }
+      }
+  }
+
+  /* ASIDE MENU BAR*/
+
+  const aside = document.getElementById('asideMain');
+  const openAside = document.getElementById('asideButton');
+
+  openAside.addEventListener('click', () => {
+    aside.classList.toggle('active');
+  });
+
+  const closeAside = document.getElementById('closeAsideButton');
+
+  closeAside.addEventListener('click', () => {
+    aside.classList.toggle('active');
+  });
+
+
+
+
+</script>

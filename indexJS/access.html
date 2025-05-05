@@ -1,0 +1,85 @@
+<script>
+  var dataUser;
+
+  function enviarFormulario(form) {
+    event.preventDefault();
+    mensajeError.hidden = true;
+    const button = document.getElementById('submitLogin');
+
+    loadingshow();
+    google.script.run
+      .withSuccessHandler(async (usuario) => {
+        console.log(usuario);
+        document.getElementById('saludoUsuario').innerHTML = `Hola ${usuario[0].completeName}!`;
+        dataUser = usuario[0];
+
+        // Esperar a que GetData termine
+        await GetData();
+
+        const loginElement = document.getElementById("login");
+        if (loginElement) {
+          loginElement.hidden = true;
+        }
+        toggleInfo()
+        //launchConfetti();
+      })
+      .withFailureHandler(showError)
+      .verificarPassword(form);
+  }
+
+
+  function showError(error){
+    loadingshow();
+    const mensajeError = document.getElementById('mensajeError');
+    mensajeError.hidden = false;
+    const button = document.getElementById('submitLogin');
+    button.disabled = false;         
+  }
+
+  function loadingshow(){
+    document.querySelector('#submitLogin').classList.toggle("d-none");
+    document.querySelector('#LoadingButton02').classList.toggle("d-none");
+  }
+
+  function loadArtwork() {
+    google.script.run.withSuccessHandler(function(data) {
+      const artworkImage = document.getElementById('artwork-image');
+      const artworkTitle = document.getElementById('artwork-title');
+      
+      artworkImage.src = data.imageUrl;
+      artworkTitle.textContent = data.title;
+    }).withFailureHandler(function(error) {
+      console.error('Error al cargar la obra de arte:', error);
+    }).getArtwork();
+  }
+
+  // Cargar la obra al inicializar la página
+  //loadArtwork();
+
+  function getRandomImage(){
+    const obras = [
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/10663.jpg', 
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/5991.jpg',
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/7122.jpg', 
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/2694.jpg',
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/10696.jpg', 
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/10661.jpg',
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/5869.jpg', 
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/6297.jpg',
+    'https://www.bellasartes.gob.ar/media/uploads/coleccion/5293.jpg'    
+    ]
+
+    const randomIndex = Math.floor(Math.random() * obras.length);
+    return obras[randomIndex];
+  }
+
+  function setRandomBackgroundImage() {
+    const imgElement = document.getElementById('backgroundImage');
+    imgElement.src = getRandomImage();
+  }
+
+  setRandomBackgroundImage();
+
+
+
+</script>

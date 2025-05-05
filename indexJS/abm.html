@@ -1,0 +1,49 @@
+<script>
+  var dataUser;
+  function getUser(){
+    google.script.run.withSuccessHandler((user) => {
+        console.log(user.data)
+        dataUser = user
+        cargarCards(user.data)
+      })
+    .traerUsuarios();
+  }
+
+  getUser();
+  
+  function cargarCards(data) {
+    data.forEach((user, index) => {
+        const pillAdmin = user[3] === "admin" ? `<span class="badge rounded-pill text-bg-success me-2">${user[3]}</span>`
+            : "";
+        const iconoEstado = user[5] === "VERDADERO"
+            ? `<i class="bi bi-check-circle ms-auto" style="color: green;"></i>`
+            : `<i class="bi bi-x-circle ms-auto" style="color: red;"></i>`;
+        const card = document.createRange().createContextualFragment(`
+            <div class="card mt-2 h-15 bg-light-subtle" role="button"  onclick="changeTitle('${user[0]}')">
+              <div class="card-body">
+                <div class="d-flex">
+                  <h5 class="card-title"><strong>${user[0]} </strong></h5>
+                  ${iconoEstado}
+                </div>
+                <ul class="list-unstyled">
+                  <li><strong>Mail:</strong> ${user[1]}</li>
+                  <li><strong>Interno:</strong> 43419</li>
+                </ul>
+                <div class="d-flex align-items-center">
+                  <span class="badge rounded-pill text-bg-secondary me-2">${user[4]}</span>
+                  <span class="badge rounded-pill text-bg-dark me-2">${user[2]}</span>
+                  ${pillAdmin}
+                </div>
+              </div>
+            </div>
+          </div>`
+        );
+        const main = document.getElementById("card");
+        main.append(card)
+    });
+  }
+
+  function changeTitle(newTitle) {
+    document.getElementById("formTitle").textContent = newTitle;
+  }
+</script>

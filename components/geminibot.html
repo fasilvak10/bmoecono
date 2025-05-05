@@ -1,0 +1,27 @@
+<button id="chatbot-minimize" class="badge btn btn-warning-subtle rounded-circle float" onclick="toggleChatbot()" aria-label="Abrir chatbot" >
+  <img class="" width="50" height="50" src="https://img.icons8.com/stickers/50/lumpy-space-princess.png" alt="lumpy-space-princess"/>
+</button>
+
+<div id="chatbot-container" style="font-size: 0.75em">
+  <div class="card">
+    <div class="card-header bg-dark text-white">
+      Chatbot
+      <button type="button" class="btn-close btn-close-white float-end" aria-label="Cerrar chatbot" onclick="toggleChatbot()"></button>
+      <button type="button" class="btn btn-sm btn-light float-end me-2 btn-minimize" onclick="minimizeChatbot()">
+                    <i class="fa-thin fa-minus"></i>
+                </button>
+    </div>
+    <div id="chatbot-body" class="card-body">
+      <!-- Los mensajes del chat aparecerán aquí -->
+      <div id="typing-indicator" class="d-none">
+        <small class="text-muted"><em>Chatbot está escribiendo...</em></small>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="input-group input-group input-group-sm">
+        <input type="text" id="user-input" class="form-control" placeholder="Escribe un mensaje..." style="font-size: 0.9em">
+        <button class="btn btn-dark btn-send boder border-0" type="button" style="font-size: 0.9em">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>

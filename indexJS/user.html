@@ -1,0 +1,40 @@
+<script>
+  
+  // Tiempo de inactividad permitido antes de marcar al usuario como inactivo (en milisegundos)
+  const TIEMPO_INACTIVIDAD_MS = 5 * 60 * 1000; // 5 minutos
+  let temporizadorInactividad;
+
+  // Función para actualizar la hora de la última actividad
+  function actualizarActividad() {
+      const ahora = new Date();
+      document.getElementById("ultimaActividad").textContent = ahora.toLocaleTimeString();
+
+      // Enviar la última actividad a Google Apps Script
+      google.script.run.registrarUltimaActividad(ahora);
+
+      // Reiniciar el temporizador de inactividad
+      clearTimeout(temporizadorInactividad);
+      temporizadorInactividad = setTimeout(usuarioInactivo, TIEMPO_INACTIVIDAD_MS);
+  }
+
+  // Función para manejar la inactividad del usuario
+  function usuarioInactivo() {
+      alert("Usuario inactivo. Se cerrará la sesión.");
+      // Aquí puedes llamar a una función en Google Apps Script para cerrar la sesión.
+      google.script.run.cerrarSesion();
+  }
+
+  // Detectar actividad del usuario en toda la ventana
+  window.addEventListener("mousemove", actualizarActividad);
+  window.addEventListener("click", actualizarActividad);
+  window.addEventListener("keypress", actualizarActividad);
+
+  function ahora() {
+   console.log("usuario ahora" + new Date())
+  }
+
+  // Detectar actividad del usuario en toda la ventana
+  window.addEventListener("mousemove", ahora);
+  window.addEventListener("click", ahora);
+  window.addEventListener("keypress", ahora);
+</script>

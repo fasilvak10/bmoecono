@@ -1,0 +1,37 @@
+<script>
+
+  var columToTable;
+  var rowToTable;
+  var gridApi;
+  var dataRegular;
+  var dataSetCierres;
+
+  function GetData() {
+  // Use a single Promise.all to handle both requests
+    return Promise.all([
+      new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((dataTable) => {
+            dataRegular = dataTable;
+            loadTable(dataRegular);
+            resolve();
+          })
+          .withFailureHandler(reject)
+          .getData();
+      }),
+      new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler((dataTable) => {
+            dataSetCierres = dataTable;
+            resolve();
+          })
+          .withFailureHandler(reject)
+          .getCierres();
+      })
+    ]);
+  }
+
+  
+  
+
+</script>

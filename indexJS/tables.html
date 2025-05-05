@@ -1,0 +1,279 @@
+<script>
+    /* GRID */
+    
+    function tableSelect(e) {
+        const selectedButton = e.target;
+        const selectedId = selectedButton.id;
+        const myGridElement = document.querySelector('#myGrid');
+
+        // Aplica el desenfoque específico y muestra el loader
+        myGridElement.classList.add("myGrid-blur");
+        showLoadingAnimation();
+
+        myGridElement.classList.add("slide-out");
+
+        setTimeout(() => {
+            myGridElement.innerHTML = "";
+            if (selectedId === "regulares-outlined") {
+                loadTable(dataRegular);
+            } else if (selectedId === "cierres-outlined") {
+                console.log(dataSetCierres.headers[0]);
+                console.log(dataSetCierres.headers[1]);
+                loadTable(dataSetCierres);
+            }
+
+            myGridElement.classList.remove("slide-out");
+            myGridElement.classList.add("slide-in");
+
+            setTimeout(() => {
+                hideLoadingAnimation();
+                myGridElement.classList.remove("myGrid-blur");
+                myGridElement.classList.remove("slide-in");
+            }, 500);
+        }, 500);
+    }
+
+
+    function showLoadingAnimation() {
+        const loader = document.getElementById("loader");
+        loader.style.display = "block";
+    }
+
+    function hideLoadingAnimation() {
+        const loader = document.getElementById("loader");
+        loader.style.display = "none";
+    }
+
+ 
+    function loadTable(dataSet) {
+        columToTable = dataSet.headers.map(header => {
+            
+            if (header === 'Sub Estado' || header === 'Tareas Pendientes' || header === 'subestado' || header === 'Tarea Pendiente') {
+                return { 'headerName': header, 'field': header, hide: true };
+            }
+
+            if (header === 'Estado') {
+                return {
+                    headerName: header,
+                    field: header,
+                    flex: 1,
+                    cellRenderer: function (params) {
+                        // Verifica el valor de "Tareas Pendientes" en la fila actual
+                        const tareasPendientes = params.data['Tareas Pendientes'];
+
+                        if (tareasPendientes !== '') {
+                            // Crea el elemento span
+                            const span = document.createElement("span");
+                            span.className = "badge rounded-pill text-bg-warning position-absolute top-0 start-100 translate-middle";
+                            span.textContent = "Tarea";
+
+                            // Establece los estilos para posicionar el span por encima y a la derecha
+                            span.style.position = "absolute";
+                            span.style.top = "0";
+                            span.style.right = "15";
+                            span.style = "font-size: 0.70em";
+                           
+
+                            // Crea un contenedor para el valor de "Estado" y el span
+                            const container = document.createElement("div");
+                            container.style.position = "relative";
+                            container.textContent = params.value;
+                            container.appendChild(span);
+
+                            return container;
+                        }
+
+                        // Retorna el valor directamente si "Tareas Pendientes" está vacío
+                        return params.value;
+                    }
+                };
+            }
+
+
+            return { 'headerName': header, 'field': header, flex: 1 };
+        });
+
+        // Configura la columna de Acciones
+        columToTable.push({
+            headerName: "Acciones",
+            field: "acciones",
+            cellRenderer: function (params) {
+                const rowDataString = JSON.stringify(params.data);
+                return `
+                    <div style="text-align:center" class="template-acciones text-center">
+                        <i class="bi bi-send-fill button-edit me-2" role="button" 
+                            onclick='editarUsuarioModal(${rowDataString})' 
+                            data-bs-toggle="offcanvas" 
+                            data-bs-target="#offcanvasRight" 
+                            aria-controls="offcanvasRight" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Editar Empresa"></i>
+                        <i class="bi bi-folder-fill button-folder me-2" role="button" style="color: cornflowerblue" onclick="abrirEnlace(this)"></i>
+                        <i class="bi bi-gear-fill button-admin me-2" id="buttonAdmin" role="button" onclick="crearOpcionAdmin(this)" hidden></i>
+                    </div>
+                `;
+            },
+            width: 150,
+            cellStyle: { 'display': 'flex', 'align-items': 'center', 'justify-content': 'center' }
+        });
+
+        rowToTable = dataSet.data.map(row => {
+            let rowData = {};
+            dataSet.headers.forEach((header, index) => {
+                rowData[header] = row[index];
+            });
+            return rowData;
+        });
+
+        var gridOptions = {
+            defaultColDef: {
+                filter: true,
+                editable: false,
+                width: 150,
+                wrapHeaderText: true,
+                autoHeaderHeight: true,
+                cellClass: 'justify-wrap-text',
+                wrapText: true,
+                headerAlign: 'center',
+                cellStyle: {
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'center'
+                },
+                icons: {
+                    filter: '<i class="bi bi-funnel"></i>'
+                }
+            },
+            pagination: true,
+            rowData: rowToTable,
+            columnDefs: columToTable,
+            rowHeight: 50,
+            domLayout: 'normal',
+            suppressCellSelection: false,
+            enableRangeSelection: true,
+            enableClipboard: true
+        };
+
+        const myGridElement = document.querySelector('#myGrid');
+        gridApi = agGrid.createGrid(myGridElement, gridOptions);
+
+        ["nombre", "empresa", "cuit", "expediente", "tramite", "fecha", "estado"].forEach((filtro, index) => {
+            let element = document.getElementById('filtro-' + filtro);
+            if (element) {
+                populateUniqueOptions(element, dataSet.data, index, {
+                    includeAll: true,
+                    allText: "Todas las opciones"
+                });
+            }
+        });
+    }
+
+    function aplicarFiltrosDesdeSelectores() {
+        try {
+            const filtros = {
+                "filtro-nombre": columToTable[0].field,
+                "filtro-empresa": columToTable[1].field,
+                "filtro-tramite": columToTable[4].field,
+                "filtro-estado": columToTable[6].field
+            };
+            const filterModel = {};
+
+            Object.entries(filtros).forEach(([filtroId, field]) => {
+                const filtroValor = document.getElementById(filtroId)?.value || "";
+                if (filtroValor && filtroValor !== "Todas las opciones") {
+                    filterModel[field] = { type: 'contains', filter: filtroValor };
+                }
+            });
+
+            console.log("Datos antes del filtrado:", rowToTable);
+
+            const filtroSubestadoCheckbox = document.getElementById("filtro-subestado");
+            console.log("Estado del checkbox de Subestado:", filtroSubestadoCheckbox?.checked);
+            
+            if (filtroSubestadoCheckbox) {
+                if (filtroSubestadoCheckbox.checked) {
+
+                    filterModel[columToTable[7].field] = {
+                        type: 'contains',
+                        filter: 'abierta'
+                    };
+                } else {
+
+                    delete filterModel[columToTable[7].field];
+                }
+            }
+
+            const filtroPresentacionPendienteCheckbox = document.getElementById("filtro-presentacionPendiente");
+
+            if (filtroPresentacionPendienteCheckbox) {
+                if (filtroPresentacionPendienteCheckbox.checked) {
+
+                    filterModel[columToTable[8].field] = {
+                        type: 'contains',
+                        filter: 'Tiene Actividades Pendientes'
+                    };
+                } else {
+
+                    delete filterModel[columToTable[8].field];
+                }
+            }
+
+
+
+            console.log("Modelo de filtro aplicado:", filterModel);
+            gridApi.setFilterModel(filterModel);
+
+            const datosFiltrados = obtenerDatosFiltrados();
+            console.log("Datos Filtrados:", datosFiltrados);
+        } catch (error) {
+            console.error("Error al aplicar filtros:", error);
+        }
+    }
+
+
+    function obtenerDatosFiltrados() {
+        const datosFiltrados = [];
+
+        gridApi.forEachNodeAfterFilterAndSort(node => {
+            datosFiltrados.push(node.data);
+        });
+
+        return datosFiltrados;
+    }
+
+
+    function valoresEnFilters(dataSet) {
+        // Mapa que asocia los nombres de los filtros con las propiedades del objeto
+        const camposMap = {
+            "nombre": "Analista Asignado (evaluador)",
+            "empresa": "Razón social",
+            "cuit": "Cuit",
+            "expediente": "Número de expediente",
+            "tramite": "Tipo de Trámite",
+            "fecha": "Fecha Cambio Estado",
+            "estado": "Estado"
+        };
+
+        // Iterar sobre cada campo de filtro y poblar las opciones
+        Object.entries(camposMap).forEach(([filtro, propiedad]) => {
+            let element = document.getElementById('filtro-' + filtro);
+
+            if (element) {
+                console.log(`Poblando opciones para ${filtro}`); // Mensaje de depuración
+
+                // Llamar a populateUniqueOptions con el elemento select y dataSet
+                populateUniqueOptions(element, dataSet, propiedad, {
+                    includeAll: true,
+                    allText: "Todas las opciones",
+                    sortAlphabetically: true
+                });
+            } else {
+                console.warn(`Elemento con id filtro-${filtro} no encontrado.`);
+            }
+        });
+    }
+
+
+
+</script>

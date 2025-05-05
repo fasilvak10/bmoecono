@@ -1,0 +1,62 @@
+<script>
+    function validarFormulario() {
+        const form = document.getElementById('crearUsuario');
+        const getFormValue = (id) => form.elements[id]?.value || '';
+        const getInnerHTML = (id) => document.getElementById(id)?.innerHTML || '';
+
+        const empresa = {
+            empresa: getInnerHTML('nombreEmpresa'),
+            cuit: getInnerHTML('cuit')?.replace(/\D/g, ''),
+            id: getFormValue('expediente'),
+            actividad: getFormValue('actividad'),
+            periodoIncial: getFormValue('periodoIncial'),
+            periodoFinal: getFormValue('periodoFinal'),
+            estado: getFormValue('estadoEmpresa'),
+            tamanio: getFormValue('tamanio'),
+            fechaSubsanacion: getFormValue('fechaSubsanacion'),
+            cantidadDias: getFormValue('cantidadDias'),
+            conclusion: getFormValue('conclusion'),
+            masaSalarial: getFormValue('masaSalarial'),
+            nomina: getFormValue('nomina'),
+            ventasTotales: getFormValue('ventasTotales'),
+            ventasPromo: getFormValue('ventasPromo'),
+            exportaciones: getFormValue('exportaciones'),
+            ventasTotalesanio2: getFormValue('ventasanio02'),
+            ventasPromoanio2: getFormValue('ventasPromoanio2'),
+            exportacionesanio2: getFormValue('exportacionesanio2'),
+            capacitacion: getFormValue('capacitacion'),
+            imasd: getFormValue('imasd'),
+            calidadTipo: getFormValue('calidadTipo'),
+            calidadEstado: getFormValue('calidadEstado'),
+            revisionLegal: getInnerHTML('fechaRevisionLegal'),
+            revisionFinal: getInnerHTML('fecha1278now'),
+            revi1266: getInnerHTML('flex-dato-afip'),
+            reviEmision: getInnerHTML('flex-dato-emision') !== '',
+            iftecnico: getFormValue('iftecnico'),
+            actoOprovi: getFormValue('provi'),
+            numacto: getFormValue('numacto'),
+            fechaActo: getFormValue('fechaActo'),
+            fechaProvi: getFormValue('fechaProvi'),
+            fechaInscripcion: getFormValue('fechaInscripcion'),
+            observaciones: getFormValue('observaciones'),
+        };
+
+        console.log(empresa);
+
+        if (empresa.id !== "") {
+            const successHandler = (result) => {
+                //document.getElementById('tableBody-usuarios').innerHTML = '';
+                form.reset();
+            };
+            
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withSuccessHandler(successHandler).guardarFormulario(empresa);
+            } else {
+                console.error('google.script.run is not available. Ensure the script is running in a Google Apps Script environment.');
+                alert('Error: Unable to save data. Please ensure the script is running in a Google Apps Script environment.');
+            }
+        } else {
+            alert('Error en la validación del formulario');
+        }
+    }
+</script>

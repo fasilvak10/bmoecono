@@ -1,0 +1,82 @@
+<section id="tableContainer" class="border rounded-4 mb-5 shadow-sm bg-body-tertiary">
+  <div class="p-4 rounded-top-4 shadow-sm" style="color: white" id="headerTableS">
+    <!-- background-color: #5D3FD3 -->
+
+    <div class="d-flex justify-content-end" style="font-size: 0.6em;">
+      <div class="btn-group" role="group" id="tableSelect">
+        <input type="radio" class="btn-check" name="options-outlined" id="regulares-outlined" autocomplete="off" checked onclick="tableSelect(event)">
+        <label class="btn btn-outline-light btn-sm rounded-start-pill" for="regulares-outlined" style="--bs-btn-font-size: .60rem">Regulares</label>
+
+        <input type="radio" class="btn-check" name="options-outlined" id="cierres-outlined" autocomplete="off" onclick="tableSelect(event)">
+        <label class="btn btn-outline-light btn-sm" for="cierres-outlined" style="--bs-btn-font-size: .60rem">Cierres</label>
+
+        <input type="radio" class="btn-check" name="options-outlined" id="sumarios-outlined" autocomplete="off" onclick="tableSelect(event)">
+        <label class="btn btn-outline-light btn-sm rounded-end-pill" for="sumarios-outlined" style="--bs-btn-font-size: .60rem">Sumarios</label>
+      </div>
+
+    </div>
+
+    <form class="d-flex justify-content-between mb-2 mt-3">
+      <div class="col-3 filtro-container">
+        <label for="filtro-tramite" class="filtro-label" hidden>Trámite</label>
+        <select type="text" class="form-select" id="filtro-tramite" onchange="aplicarFiltrosDesdeSelectores()">
+      <option value="Todos">Todos</option>
+    </select>
+      </div>
+
+      <div class="col-3 filtro-container">
+        <label for="filtro-empresa" class="filtro-label" hidden>Empresa</label>
+        <select type="text" class="form-select" id="filtro-empresa" onchange="aplicarFiltrosDesdeSelectores()">
+      <option value="Todos">Todos</option>
+    </select>
+      </div>
+
+      <div class="col-2 filtro-container">
+        <label for="filtro-estado" class="filtro-label" hidden>Estado</label>
+        <select type="text" class="form-select" id="filtro-estado" onchange="aplicarFiltrosDesdeSelectores()">
+      <option value="Todos">Todos</option>
+    </select>
+      </div>
+
+      <div class="col-3 filtro-container">
+        <label for="filtro-nombre" class="filtro-label" hidden>Responsable</label>
+        <select type="text" class="form-select" id="filtro-nombre" onchange="aplicarFiltrosDesdeSelectores()">
+      <option value="Todos">Todos</option>
+    </select>
+      </div>
+    </form>
+
+
+    <div class="d-flex flex-row-reverse mt-3">
+      <div class="form-check form-switch form-check-reverse ">
+        <input class="form-check-input" type="checkbox" id="filtro-subestado" onchange="aplicarFiltrosDesdeSelectores()">
+        <label class="form-check-label" for="filtro-subestado">Trámites Abiertos</label>
+      </div>
+
+      <div class="form-check form-switch form-check-reverse me-3 ">
+        <input class="form-check-input" type="checkbox" id="filtro-afip">
+        <label class="form-check-label" for="filtro-afip">Pendiente envío 1266</label>
+      </div>
+
+      <div class="form-check form-switch form-check-reverse me-3">
+        <input class="form-check-input" type="checkbox" id="filtro-presentacionPendiente" onchange="aplicarFiltrosDesdeSelectores()">
+        <label class="form-check-label" for="filtro-presentacionPendiente">Presentación Pendiente</label>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="p-1">
+    <!-- Your Data Grid container -->
+    <div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
+  </div>
+
+  <div id="loader" style="display: none; position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+
+</section>

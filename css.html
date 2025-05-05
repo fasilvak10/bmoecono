@@ -1,0 +1,616 @@
+<!-- Consolidar enlaces de preconexión -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Cargar fuente desde Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+  rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Varela&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap"
+  rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5.1.0/600.min.css">
+
+<link rel="stylesheet" href="sweetalert2.min.css">
+
+<style>
+  /* COLOR GEMINI GOOGLE */
+  :root {
+    --googledevai-blue: #4285F4;
+    --googledevai-cyan: #34A853;
+    --googledevai-purple: #9b51e0;
+    --googledevai-red: #8e24aa;
+  }
+
+
+  /* geist-sans-latin-400-normal */
+  @font-face {
+    font-family: 'Geist Sans';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 500;
+    src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-400-normal.woff2) format('woff2'), url(https://cdn.jsdelivr.net/fontsource/fonts/geist-sans@latest/latin-500-normal.woff) format('woff');
+  }
+
+  #header-navbar {
+    height: auto;
+  }
+
+  .btn-custom {
+    background-color: white;
+    /* Color de fondo predeterminado */
+    color: #50535C;
+    /* Color del texto predeterminado */
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    /* Transición suave del cambio de color */
+    border-radius: 10px;
+    //transition: all 0.3s ease;
+    /* Agregar animación a los botones */
+    //text-decoration: none;
+  }
+
+  .btn-custom a {
+    text-decoration: none;
+    transition: all 0.1s ease;
+    color: #50535C;
+  }
+
+  .btn-custom:hover {
+    background-color: #9283BE;
+    /* Color de fondo cuando el mouse está sobre el botón */
+    color: #E7E7E7;
+  }
+
+  .btn-custom a:hover {
+    background-color: #9283BE;
+    /* Color de fondo cuando el mouse está sobre el botón */
+    color: #E7E7E7;
+  }
+
+  footer {
+    position: relative;
+    width: 100%;
+    height: auto;
+    color: white;
+  }
+
+  .hidden {
+    display: none;
+    transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+  }
+
+  body {
+    //font-family: 'PT Serif', serif;
+    //font-family: "Inter", sans-serif;
+    //font-family: "Poppins", sans-serif;
+    //font-family: "Geist Sans", sans-serif;
+    //font-family: 'Varela', sans-serif;
+    //font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: 'Outfit', sans-serif;
+    //font-family: 'Space Mono', monospace;
+    //font-family: 'Rethink Sans', monospace;
+    background: #F8F9F9;
+    border-radius: 10px
+  }
+
+  .contenedor {
+    display: flex;
+    min-height: 100vh;
+    height: auto;
+  }
+
+  #asideMain {
+    background-color: white;
+    font-size: 0.90em;
+    width: 10%;
+    padding: 5px;
+    box-sizing: border-box;
+    box-shadow: 3px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    /* Fija el aside */
+    left: -10%;
+    /* Oculta el aside hacia la izquierda */
+    top: 50px;
+    /* Ajusta el top para que esté por debajo del nav (ajusta el valor según la altura del nav) */
+    height: calc(100vh - 50px);
+    /* Ajusta la altura según el espacio que ocupe el nav */
+    transition: left 0.3s ease;
+    /* Animación suave al cambiar la posición */
+  }
+
+  #asideMain.active {
+    left: 0;
+    /* Muestra el aside */
+  }
+
+
+  #asideModal {
+    background-color: #282a4e;
+    color: #E7E7E7;
+    width: 49%;
+    /* Ancho de la barra lateral, puedes ajustarlo según tus necesidades */
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  main {
+    background: #F8F9F9;
+    border-radius: 10px;
+    width: 100%;
+  }
+
+  .login {
+    background-color: #f8f9f9;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+  }
+
+  .loading {
+    background-color: #154c79;
+    width: 100vw;
+    height: 100vh;
+    position: flex;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    border-radius: 10px
+  }
+
+  tr {
+    border-radius: 30px;
+    height: 50px;
+  }
+
+  thead {
+    background: black;
+    color: white;
+    border-radius: 10px;
+  }
+
+  th {
+    border: none;
+    vertical-align: middle;
+
+  }
+
+  table {
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 5px 5px 5px 3px rgba(0.2, 0, 0, 0.1);
+    /* Sombra a la derecha del aside */
+    text-align: center;
+  }
+
+  tr:hover {
+    //background: #FBEEE6;
+  }
+
+  tr,
+  td {
+    vertical-align: middle;
+  }
+
+
+  tr {
+    border-radius: 10px;
+    border-bottom: 3px solid white;
+  }
+
+
+  .container {
+    max-width: auto;
+  }
+
+  .button-edit {
+    color: #86A3C2;
+  }
+
+  .button-delete {
+    color: #E38080;
+  }
+
+  ::placeholder {
+    color: cornflowerblue;
+    font-size: 0, 8 em;
+    font-style: italic;
+  }
+
+  .spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+  }
+
+  .spinner i {
+    font-size: 30px;
+    color: #5c5c5c;
+  }
+
+  .form-control {
+    background: #F4F6F6
+  }
+
+  #buscarRegistro {
+    border-radius: 6px;
+    font-size: 1em;
+    background: #F4F6F6
+  }
+
+  #filtro-nombre {
+    font-size: 1em;
+    background: #F4F6F6
+  }
+
+  #filtro-empresa {
+    font-size: 1em;
+    background: #F4F6F6
+  }
+
+  #filtro-estado {
+    font-size: 1em;
+    background: #F4F6F6
+  }
+
+  #filtro-tramite {
+    font-size: 1em;
+    background: #F4F6F6
+  }
+
+  .input-group-addon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+
+  .input-group-addon i {
+    color: #999;
+  }
+
+  .form-control:focus::placeholder {
+    color: transparent;
+  }
+
+  #buscarRegistro:focus+.input-group-addon i,
+  #buscarRegistro:valid+.input-group-addon i {
+    color: #000;
+  }
+
+  /* Estilos personalizados para la barra de desplazamiento */
+  body::-webkit-scrollbar {
+    width: 10px;
+    /* Ancho de la barra de desplazamiento */
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color del pulgar de la barra de desplazamiento */
+    border-radius: 5px;
+    /* Radio de borde del pulgar */
+  }
+
+  body::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    /* Color de fondo de la pista de la barra de desplazamiento */
+  }
+
+  #createModal::-webkit-scrollbar {
+    width: 10px;
+    /* Ancho de la barra de desplazamiento */
+  }
+
+  #createModal::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color del pulgar de la barra de desplazamiento */
+    border-radius: 5px;
+    /* Radio de borde del pulgar */
+  }
+
+  #createModal::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    /* Color de fondo de la pista de la barra de desplazamiento */
+  }
+
+  #typing {
+    color: #0057ff;
+  }
+
+
+  /* Estilo para el paginador */
+  #pagination-numbers {}
+
+  .page-item {
+    background-color: #50535C;
+    color: #9283BE;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .page-item a {
+    text-decoration: none;
+    color: #50535C;
+    font-size: 11px;
+  }
+
+  .page-item.previousButton,
+  .page-item.nextButton {
+    background-color: #ccc;
+    /* Estilo para los botones "Ant" y "Sig" */
+  }
+
+  .page-item.previousButton a,
+  .page-item.nextButton a {
+    color: #333;
+  }
+
+  .accordion-button[aria-expanded="true"] {
+    background-color: #9284be17;
+    color: black;
+    box-shadow: none;
+    //font-weight: bold
+  }
+
+  .accordion-button[aria-expanded="true"] .icon {
+    fill: black;
+    /* Cambia el color del ícono a negro */
+  }
+
+  .accordion-button[aria-expanded="true"]+.periodo-dateas,
+  .accordion-button[aria-expanded="true"]+.accordion-collapse .periodo-dateas,
+  .accordion-button[aria-expanded="true"]+.presentacion-dateas,
+  .accordion-button[aria-expanded="true"]+.accordion-collapse .presentacion-dateas {
+    display: none;
+
+  }
+
+  .navbar {
+    position: sticky;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 1030;
+  }
+
+  .ag-theme-quartz {
+
+    --ag-borders: none;
+    --ag-font-family: Rethink Sans;
+    --ag-font-size: 1 rem;
+  }
+
+  .ag-root-wrapper {
+    border: none;
+    
+  }
+
+  .ag-cell {
+    user-select: text;
+    /* Permite la selección de texto */
+  }
+
+  /* #headerTableS {
+    background-color: black;
+  } */
+
+
+  #headerTableS {
+    background: linear-gradient(90deg,
+        var(--googledevai-blue) 50%,
+        var(--googledevai-cyan),
+        var(--googledevai-purple),
+        var(--googledevai-red));
+  }
+
+  /**** ANIMACIÓN DEL CHARACTER  ****/
+  @keyframes float {
+    0% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+
+  /****** ANIMACIÓN DE CAMBIO DE TABLAS ******/
+
+  .float {
+    animation: float 1.8s ease-in-out infinite;
+  }
+
+  /* Blur específico para myGrid */
+  .myGrid-blur {
+    filter: blur(4px);
+  }
+
+  /* Animación de salida hacia la izquierda */
+  .slide-out {
+    animation: slideOut 0.5s forwards;
+  }
+
+  /* Animación de entrada desde la derecha */
+  .slide-in {
+    animation: slideIn 0.5s forwards;
+  }
+
+  /* Keyframes para salida hacia la izquierda */
+  @keyframes slideOut {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
+
+  /* Keyframes para entrada desde la derecha */
+  @keyframes slideIn {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+
+  .ag-header-cell-label {
+    justify-content: center;
+  }
+
+  /******* ESTILO DE FILTRO *********/
+
+  .filtro-label {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding-left: 10px;
+    font-size: 0.8em;
+  }
+
+  .badge {
+    transition: transform 0.2s ease;
+    /* Suaviza la transición */
+  }
+
+  .badge:hover {
+    transform: scale(1.1);
+    /* Aumenta el tamaño en un 10% al pasar el mouse */
+  }
+
+  /* STILO BOTON DE CIERRE */
+
+  .small-close-btn {
+    width: 0.75rem;
+    height: 0.75rem;
+    font-size: 0.5rem;
+  }
+
+
+  .expanded-container {
+    padding-top: 7rem !important;
+    /* Aumenta el espacio superior */
+    padding-bottom: 7rem !important;
+    /* Aumenta el espacio inferior */
+
+  }
+
+  /* Forma decorativa */
+  .stats-container::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    /* Color semitransparente */
+    border-radius: 50%;
+    /* Forma elipse */
+    top: -100px;
+    /* Ajusta la posición */
+    right: -100px;
+    /* Ajusta la posición */
+    transform: rotate(25deg);
+    /* Ajusta la inclinación */
+    pointer-events: none;
+    /* Evita que interfiera con la interacción */
+  }
+
+  .resize-bar {
+    position: absolute;
+    top: 0;
+    left: -5px;
+    /* Colocar el borde a la izquierda del offcanvas */
+    width: 5px;
+    height: 100%;
+    cursor: ew-resize;
+    background-color: #ccc;
+  }
+
+
+  /* SCROLEABLE CARDS ABM USER! */
+
+  .scrollable-cards {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .scrollable-cards {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .scrollable-cards::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollable-cards::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .scrollable-cards::-webkit-scrollbar-thumb {
+    background-color: #b0b0b0;
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+  }
+
+  .scrollable-cards::-webkit-scrollbar-thumb:hover {
+    background-color: #8c8c8c;
+  }
+
+  /* STILOS CHATBOT */
+
+  #chatbot-container {
+    display: none; 
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 300px;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+  }
+
+  #chatbot-body {
+    height: 300px;
+    overflow-y: auto;
+  }
+
+  #chatbot-minimize {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+  }
+
+</style>

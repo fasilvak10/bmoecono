@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta evaluador="viewport" content="width=device-width, initial-scale=1">
+  <title>./econocimiento</title>
+  <link rel="icon" href="https://iconos8.es/icon/58785/jake" type="image/jake">
+
+  <base target="_top">
+  <!-- Cargar hojas de estilos -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Includes all JS & CSS for the JavaScript Data Grid -->
+  <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+
+  <!--CSS styles-->
+  <?!= include('css'); ?>
+
+</head>
+
+<body>
+  <!--component Login user! -->
+  <?!= include('components/login'); ?>
+  
+  <!--navigation web - navabar! -->
+  <?!= include('components/navs'); ?>
+
+  <div class="contenedor" id="overview">
+    <?!= include('components/aside'); ?>
+
+    <main id="app" class="container container-fluid" style="font-size: 0.80em;">
+
+      <div>
+        <?!= include('components/header'); ?>
+      </div>
+
+      <div class="mt-3 mb-2" style="text-align: center; ">
+        <?!= include('components/table'); ?>
+      </div>
+
+    </main>
+
+  </div>
+
+  <div>
+    <!-- banner -->
+    <?!= include('components/banner'); ?>
+  </div>
+
+  <!--component cards! -->
+  <!--   <?!= include('components/cards'); ?> -->
+
+  <!-- component modal-form -->
+  <?!= include('components/form'); ?>
+
+  <!-- component modal-abm -->
+  <?!= include('components/abm'); ?>
+
+  <!-- component gemini-bot -->
+  <?!= include('components/geminibot'); ?>
+
+  <!--footer -->
+  <?!= include('components/footer'); ?>
+
+  <!-- Cargar dependencias -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+  </script>
+
+  <!-- Cargar Bootstrap (incluyendo Popper.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous">
+  </script>
+
+
+  <!-- Cargar otras librerías -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="sweetalert2.all.min.js"></script>
+
+  <!-- JS asociado a cada Component -->
+
+  <?!= include('indexJS/index'); ?>
+  <?!= include('indexJS/access'); ?>
+  <?!= include('indexJS/getdata'); ?>
+  <?!= include('indexJS/tables'); ?>
+  <?!= include('indexJS/filters'); ?>
+  <?!= include('indexJS/abm'); ?>
+  <?!= include('indexJS/geminibot'); ?>
+  <?!= include('indexJS/form'); ?>
+  <?!= include('indexJS/sendform'); ?>
+  <!-- <?!= include('indexJS/user'); ?> -->
+
+
+</body>
+
+</html>
+
