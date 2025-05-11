@@ -5,124 +5,118 @@
     const actividadesArray = dataRegular.additionalData.map(item => [item.actividad]);
     
     const form = document.getElementById('crearUsuario');
+
     const cajaEstado = form.estadoEmpresa;
     populateUniqueOptions(cajaEstado, dataRegular.data, 6);
     const cajaActividad = form.actividad;
     populateUniqueOptions(cajaActividad, actividadesArray, 0);
 
-    console.log("hola")
-    console.log(additionalData)
-    const empresa = document.getElementById("nombreEmpresa");
-    empresa.innerHTML = additionalData[0].empresa;
+    const data = additionalData[0]; // Extraemos los datos de la empresa
 
-    // Llenar todos los campos del formulario con los datos disponibles
-    Object.keys(additionalData[0]).forEach(key => {
+    console.log("datosEmpresaClick")
+    console.log(data);
+
+    // Llenar nombre empresa
+    document.getElementById("nombreEmpresa").textContent = data.empresa;
+
+    // Llenar campos del formulario si existen en el form
+    Object.keys(data).forEach(key => {
       if (form[key] !== undefined) {
-        form[key].value = additionalData[0][key];
+        form[key].value = data[key];
       }
     });
 
+    // Manejo de campos según tipo de trámite
     const columnNameTram = rowData[columToTable[4].field];
-    const estadoEmpresa = additionalData[0].estadoEmpresa;
+    const estadoEmpresa = data.estadoEmpresa;
 
-    // Manejo de campos específicos basados en el tipo de trámite
-    const expobienal = document.getElementById("expobienal-hidden");
-    expobienal.hidden = columnNameTram !== "Revalidación Bienal";
+    document.getElementById("expobienal-hidden").hidden = columnNameTram !== "Revalidación Bienal";
 
     const requisitosAdicionales = document.getElementById("requisitosAdicionales");
-    requisitosAdicionales.hidden = columnNameTram === "Acreditación de Cumplimiento Anual" || columnNameTram === "Ratificación de Adhesión";
+    requisitosAdicionales.hidden = ["Acreditación de Cumplimiento Anual", "Ratificación de Adhesión"].includes(columnNameTram);
 
     const hiddenNumActo = document.getElementById("hiddenNumActo");
     const actoOprovi = document.getElementById("actoOprovi");
-    if (columnNameTram === "Inscripción al Régimen" || columnNameTram === "Solicitud de Baja" || columnNameTram === 'Ratificación de Adhesión') {
+    if (["Inscripción al Régimen", "Solicitud de Baja", "Ratificación de Adhesión"].includes(columnNameTram)) {
       hiddenNumActo.hidden = false;
-      actoOprovi.innerHTML = "Acto Administrativo";
+      actoOprovi.textContent = "Acto Administrativo";
     } else {
       hiddenNumActo.hidden = true;
-      actoOprovi.innerHTML = "Providencia";
+      actoOprovi.textContent = "Providencia";
     }
 
-    const hiddenFechaInscripcion = document.getElementById("hiddenFechaInscripcion");
-    const hiddenActo = document.getElementById("hiddenActo");
-    const hidden1266 = document.getElementById("hidden-1266");
-    if (columnNameTram === "Inscripción al Régimen" || columnNameTram === "Ratificación de Adhesión" || columnNameTram === "Solicitud de Baja") {
-      hiddenFechaInscripcion.hidden = false;
-      hiddenActo.hidden = false;
-      hidden1266.hidden = false;
-    } else {
-      hiddenFechaInscripcion.hidden = true;
-      hiddenActo.hidden = true;
-      hidden1266.hidden = true;
-    }
+    const showActoFields = ["Inscripción al Régimen", "Ratificación de Adhesión", "Solicitud de Baja"].includes(columnNameTram);
+    document.getElementById("hiddenFechaInscripcion").hidden = !showActoFields;
+    document.getElementById("hiddenActo").hidden = !showActoFields;
+    document.getElementById("hidden-1266").hidden = !showActoFields;
 
     const labelFechaInscripcion = document.getElementById("labelFechaInscripcion");
-    labelFechaInscripcion.innerHTML = columnNameTram === "Solicitud de Baja" ? "Fecha Baja Otorgada" : "Fecha Inscripción";
+    labelFechaInscripcion.textContent = columnNameTram === "Solicitud de Baja" ? "Fecha Baja Otorgada" : "Fecha Inscripción";
 
     const subsanacion = document.getElementById("subsaHidden");
     subsanacion.classList.toggle("hidden", estadoEmpresa !== "Subsanación");
 
-    const asesorLegal = document.getElementById('asesorLegal');
-    const revisorFinal = document.getElementById('revisorFinal');
-
-    asesorLegal.innerHTML = additionalData[0].asesorLegal;
-    revisorFinal.innerHTML = additionalData[0].revisorFinal;
-
-    const checkRevisionLegal = document.getElementById('flexRevisionLegal');
-    const fechaRevisionLegal = document.getElementById('fechaRevisionLegal');
-    
-    const checkRevisionFinal = document.getElementById('flexRevisionFinal');
-    const check1266 = document.getElementById('flex-afip');
-    const checkDisponibleEmision = document.getElementById('flex-emision');
-
-
-    checkRevisionLegal.checked = additionalData[0].fechaRevisionLegal !== '';
-    fechaRevisionLegal.innerHTML = additionalData[0].fechaRevisionLegal;
-    
-    checkRevisionFinal.checked = additionalData[0].fechaRevisionFinal !== '';
-    check1266.checked = additionalData[0].informadoAfip === 'TRUE';
-    checkDisponibleEmision.checked = additionalData[0].disponibleEmision === 'TRUE';
-
-    document.getElementById('revisorRealLegal').innerHTML = additionalData[0].revisorRealLegal;
-    document.getElementById('revisorRealFinal').innerHTML = additionalData[0].revisorRealFinal;
-
-    const folderButton = document.getElementById("carpetaEmpresaAcceso");
-    folderButton.setAttribute("href", additionalData[0].carpetaEmpresa);
-
-    // Calcular y mostrar porcentajes de exportación
-    /* calcularPorcentajeExpo(additionalData[0].ventasPromo, additionalData[0].exportaciones, document.getElementById('porcentajeExpoCalculado'));
-    if (columnNameTram === "Revalidación Bienal") {
-      calcularPorcentajeExpo(additionalData[0].ventasPromoanio2, additionalData[0].exportacionesanio2, document.getElementById('porcentajeExpoCalculadoAnio2'));
-    } */
+    // Usar la función centralizada para llenar campos especiales
+    cargarCamposEmpresa(data);
   }
 
-  //LÓGICA PARA CAMPO SUBSANACIÓN->
-  
+  function cargarCamposEmpresa(data) {
+    // Divs de texto directo (algunos con paréntesis)
+    const camposConParentesis = ['revisorRealLegal', 'revisorRealFinal'];
+    const camposDirectos = ['asesorLegal', 'revisorFinal', 'fechaRevisionLegal', 'flex-dato-afip', 'flex-dato-emision', ...camposConParentesis];
+
+    camposDirectos.forEach(id => {
+      const el = document.getElementById(id);
+      
+      if (el) {
+        const valor = data[id] || '';
+        el.textContent = camposConParentesis.includes(id) && valor ? `(${valor})` : valor;
+      }
+    });
+
+    // Checkboxes
+    const checkboxMap = {
+      'flexRevisionLegal': !!data.fechaRevisionLegal,
+      'flexRevisionFinal': !!data.fechaRevisionFinal,
+      'flex-afip': data.informadoAfip === 'TRUE',
+      'flex-emision': data.disponibleEmision === 'TRUE'
+    };
+
+    Object.entries(checkboxMap).forEach(([id, checked]) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = checked;
+    });
+
+    // Carpeta de acceso
+    const link = document.getElementById("carpetaEmpresaAcceso");
+    if (link) link.href = data.carpetaEmpresa || '#';
+  }
+
+
+  // Cambio estado empresa => mostrar campos subsanación
   document.getElementById("estadoEmpresa").addEventListener("change", (event) => {
     const subsanacion = document.getElementById("subsaHidden");
     const elementos = subsanacion.querySelectorAll("date, number");
     const estado = event.target.value;
 
-    if (estado === 'Subsanación') {
-        subsanacion.classList.remove("hidden");
-        elementos.forEach(element => element.required = true);
-    } else {
-        subsanacion.classList.add("hidden");
-        elementos.forEach(element => element.required = false);
-    }
+    const mostrar = estado === 'Subsanación';
+    subsanacion.classList.toggle("hidden", !mostrar);
+    elementos.forEach(element => element.required = mostrar);
   });
 
+  // Función reutilizable para checkboxes con timestamps
   function updateTimestamp(checkbox, fecharevinow, nameReviReal) {
     const timestamp = new Date().toLocaleString();
 
     if (checkbox.checked) {
-      fecharevinow.innerHTML = timestamp;
+      fecharevinow.textContent = timestamp;
       if (nameReviReal) {
-        nameReviReal.innerHTML = `(${dataUser?.name})` || "(Desconocido)"; 
+        nameReviReal.textContent = `(${dataUser?.name})` || "(Desconocido)";
       }
     } else {
-      fecharevinow.innerHTML = '';
+      fecharevinow.textContent = '';
       if (nameReviReal) {
-        nameReviReal.innerHTML = '';
+        nameReviReal.textContent = '';
       }
     }
   }

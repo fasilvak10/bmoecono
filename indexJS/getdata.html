@@ -1,19 +1,33 @@
 <script>
+  /* VARIABLES GLOBALES */
 
   var columToTable;
   var rowToTable;
   var gridApi;
   var dataRegular;
   var dataSetCierres;
+  var dataRegistro; 
 
   function GetData() {
-  // Use a single Promise.all to handle both requests
+    const myGridElement = document.querySelector('#myGrid');
+    const updateStatus = document.getElementById('updateStatus');
+
+    if (myGridElement) {
+      showLoadingAnimation();
+      
+      myGridElement.classList.add("myGrid-blur");
+    }
+    if (updateStatus) {
+      updateStatus.style.display = 'block'; // Mostrar mensaje "actualizando"
+    }
+
     return Promise.all([
       new Promise((resolve, reject) => {
         google.script.run
           .withSuccessHandler((dataTable) => {
             dataRegular = dataTable;
-            loadTable(dataRegular);
+            console.log(dataRegular)
+            loadTable(dataRegular); // 🔁 Actualiza datos sin recrear el grid
             resolve();
           })
           .withFailureHandler(reject)
@@ -28,10 +42,25 @@
           .withFailureHandler(reject)
           .getCierres();
       })
-    ]);
+    ])
+      .finally(() => {
+        hideLoadingAnimation();
+        myGridElement?.classList.remove("myGrid-blur");
+        if (updateStatus) {
+          updateStatus.style.display = 'none'; // Ocultar mensaje "actualizando"
+        }
+      });
   }
 
-  
-  
+  function getDatosRegistro(){
+    google.script.run
+      .withSuccessHandler((data) => {
+        dataRegistro = data; 
+        //console.log(dataRegistro) 
+    }).getRegistro();
+  }  
+
+  getDatosRegistro()
+      
 
 </script>

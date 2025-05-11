@@ -1,0 +1,188 @@
+<!-- Pseudo-Modal completamente independiente -->
+<div id="pseudoModalEmpresas" class="pseudo-modal">
+  <div class="pseudo-modal-dialog">
+    <div class="modal-content bg-white p-3">
+
+      <div class="modal-header">
+        <div class="container">
+          <form class="d-flex justify-content-between">
+            <div class="flex-grow-1 ms-1">
+              <select type="text" class="form-select form-select-sm" id="filtro-empresa-dateas">
+                <option value="Todos">Todos</option>
+             </select>
+            </div>
+          </form>
+        </div>
+        <button type="button" class="btn-close" aria-label="Cerrar" onclick="cerrarPseudoModal('pseudoModalEmpresas')"></button>
+      </div>
+
+      <div class="modal-body mt-2 p-1" style="font-family: 'Space Mono', monospace; font-size: 0.8rem">
+
+        <header class="container pt-2 pb-1 text-bg-primary rounded-3"
+          style="display: grid; grid-template-columns: 3fr 2fr; text-align: center;">
+          <div>
+            <h3 id="razon-dateas" style="align-self: center;" class="mt-1">EMPRESA</h3>
+            <div id="provincia-dateas"></div>
+            <div id="ulactividad-dateas"></div>
+            
+          </div>
+          <div class="border-start" style="display: flex; flex-direction: column; justify-content: center;">
+            <div id="cuit-dateas">CUIT</div>
+            <div id="rl-dateas">RL</div>
+            <div id="fechaInscripcion-dateas">Inscripcion</div>
+            <div id="acto-dateas">Acto</div>
+            <div id="periodoAnalisis"></div>
+            <div id="correo-dateas"></div>
+          </div>
+        </header>
+
+        <div class="accordion accordion-flush mt-3 mb-3" id="accordionFlushExample">
+          <div id="contenedor-formularios">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer mt-2">
+        <button type="button" class="btn btn-sm btn-secondary" onclick="cerrarPseudoModal('pseudoModalEmpresas')">Close</button>
+        <button type="button" class="btn btn-sm btn-primary ms-2">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template id="formulario-template">
+  <div class="accordion-item mb-3 rounded-3">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed px-4 py-3" type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#flush-collapse-{{uniqueID}}"
+        aria-expanded="false"
+        aria-controls="flush-collapse-{{uniqueID}}"
+        onclick="toggleHiddenDateas(('.periodo-dateas', '.presentacion-dateas'))"
+        style="box-shadow: none;">
+
+        <div>
+          <div class="tramite-dateas fw-semibold fs-5">Trámite</div>
+          <div class="periodo-dateas text-muted small">Periodo-Periodo</div>
+          <div class="presentacion-dateas text-muted small">25-May-2022</div>
+        </div>
+      </button>
+    </h2>
+
+    <div id="flush-collapse-{{uniqueID}}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body px-4 py-3">
+        <form class="mb-0">
+
+          <!-- Grupo 1 -->
+          <div class="row g-3 mb-4 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Estado</label>
+              <div class="estado-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Actividad</label>
+              <div class="actividad-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Carpeta Empresa</label>
+              <a class="documentos-dateas d-block" href="#">Ver Carpeta</a>
+            </div>
+          </div>
+
+          <!-- Grupo 2 -->
+          <div class="row g-3 mb-4 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Periodo</label>
+              <div class="periodo-dateas-form">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Expediente</label>
+              <div class="expediente-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Fecha Presentación</label>
+              <div class="presentacion-dateas-form">Some Content</div>
+            </div>
+          </div>
+
+          <!-- Grupo 3 -->
+          <div class="row g-3 mb-4 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Analista</label>
+              <div class="analista-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Asesor Legal</label>
+              <div class="legal-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Revisor Final</label>
+              <div class="revisor-dateas">Some Content</div>
+            </div>
+          </div>
+
+          <!-- Grupo 4 -->
+          <div class="row g-3 mb-4 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Fecha Inscripción / PV</label>
+              <div class="fecha-inscripcion-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Tamaño</label>
+              <div class="tamanio-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Menor a 3 años</label>
+              <div class="menor-dateas">Some Content</div>
+            </div>
+          </div>
+
+          <!-- Grupo 5 -->
+          <div class="row g-3 mb-4 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Ventas Totales</label>
+              <div class="ventasTotales-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Ventas Promovidas</label>
+              <div class="ventasPromo-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Exportaciones Promovidas</label>
+              <div class="expoPromo-dateas">Some Content</div>
+            </div>
+          </div>
+
+          <!-- Grupo 6 -->
+          <div class="row g-3 mb-2 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Nómina</label>
+              <div class="nomina-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Calidad</label>
+              <div class="calidad-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Estado Calidad</label>
+              <div class="estadoCalidad-dateas">Some Content</div>
+            </div>
+          </div>
+
+          <!-- Grupo 7 -->
+          <div class="row g-3 text-center">
+            <div class="col-md">
+              <label class="fw-bold">Investigación y Desarrollo</label>
+              <div class="imasd-dateas">Some Content</div>
+            </div>
+            <div class="col-md">
+              <label class="fw-bold">Capacitación</label>
+              <div class="capacitacion-dateas">Some Content</div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</template>

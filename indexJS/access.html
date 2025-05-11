@@ -14,14 +14,14 @@
         dataUser = usuario[0];
 
         // Esperar a que GetData termine
-        await GetData();
+        GetData();
 
         const loginElement = document.getElementById("login");
         if (loginElement) {
           loginElement.hidden = true;
         }
         toggleInfo()
-        //launchConfetti();
+        launchConfetti();
       })
       .withFailureHandler(showError)
       .verificarPassword(form);
@@ -39,7 +39,17 @@
   function loadingshow(){
     document.querySelector('#submitLogin').classList.toggle("d-none");
     document.querySelector('#LoadingButton02').classList.toggle("d-none");
+
+
   }
+
+  function loadingCharge(botonOriginal, botonLoading) {
+
+    botonOriginal.classList.add('d-none');
+    botonLoading.classList.remove('d-none');
+
+  }
+
 
   function loadArtwork() {
     google.script.run.withSuccessHandler(function(data) {

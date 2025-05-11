@@ -1,6 +1,4 @@
-<nav class="navbar navbar-expand-lg border-bottom p-0" style="background-color: light;"
-  id="header-navbar">
-
+<nav class="navbar navbar-expand-lg border-bottom p-0" style="background-color: light;" id="header-navbar">
   <div class="container d-flex justify-content-between">
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -14,31 +12,31 @@
       <img src="https://img.icons8.com/color/40/null/jake--v1.png" alt="Logo" class="" /> bmo <i>webside</i>
     </a>
 
-
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-2">
-        <li class="nav-item">
-          <a class="nav-link active" role="button" aria-current="page" id="blbl">Trámites</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" role="button" id="ModalCierreBienal">Auditorías</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" role="button" id="">Contable</a>
-        </li>
-        <li class="nav-item" hidden>
-          <a class="nav-link" id="dash">Beneficios</a>
-        </li>
+        <li class="nav-item"><a class="nav-link active" role="button" aria-current="page" id="blbl">Trámites</a></li>
+        <li class="nav-item"><a class="nav-link" role="button" id="">Auditorías</a></li>
+        <li class="nav-item"><a class="nav-link" role="button">Contable</a></li>
+        <li class="nav-item" hidden><a class="nav-link" id="dash">Beneficios</a></li>
       </ul>
     </div>
 
-    <form class="input-group w-50" style="background">
-      <input type="text" class="form-control" id="buscarRegistro" placeholder=" ">
-      <span class="input-group-addon">
-      <i class="bi bi-search"></i>
-    </span>
-      <button class="btn btn-light btm-sm ms-1 border" type="button" onclick=""><i class="bi bi-bell"></i></button>
+    <!-- Dentro del <form> de la barra de búsqueda -->
+    <form class="input-group w-50 position-relative" style="background">
+      <input type="text" class="form-control" id="buscarRegistro" placeholder="  Usá TAB para alternar entre las tablas">
+      <span class="input-group-addon"><i class="bi bi-search"></i></span>
+      <button class="btn btn-light btm-sm ms-1 border" type="button"><i class="bi bi-bell"></i></button>
+
+      <!-- Pills (ocultas por defecto) -->
+      <div id="searchPills" class="position-absolute d-none bg-none">
+        <button type="button" class="btn btn-outline-primary  me-1 pill border active">Tramites <i class="bi bi-table"></i></button>
+        <button type="button" class="btn btn-outline-primary  pill border">Empresas <i class="bi bi-box-seam"></i></button>
+      </div>
     </form>
 
+
+    <!-- 🔘 Botón Modo Oscuro -->
+    <button id="modoOscuroBtn" class="btn btn-light btm-sm ms-1 border"><i class="bi bi-moon-fill"></i></button>
+
   </div>
-</nav> 
+</nav>

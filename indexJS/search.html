@@ -1,0 +1,271 @@
+<script>
+  let modoBusqueda = "tramites"; // por defecto
+
+  document.querySelectorAll('#searchPills .pill').forEach(pill => {
+    pill.addEventListener('click', function () {
+      // Eliminar la clase active de todas las pills
+      document.querySelectorAll('#searchPills .pill').forEach(p => p.classList.remove('active'));
+
+      // Agregar la clase active a la pill seleccionada
+      this.classList.add('active');
+
+      // Cambiar el modo de búsqueda
+      if (this.textContent.trim() === 'Tramites') {
+        modoBusqueda = 'tramites';
+      } else if (this.textContent.trim() === 'Empresas') {
+        modoBusqueda = 'empresas';
+      }
+    });
+  });
+
+  const inputBusqueda = document.getElementById('buscarRegistro'); // o el ID real de tu input
+
+  inputBusqueda.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab') {
+      e.preventDefault(); // evitar el tab normal si querés que solo cambie la pill
+
+      const pills = document.querySelectorAll('#searchPills .pill');
+      const activePill = document.querySelector('#searchPills .pill.active');
+
+      let nuevaPill;
+
+      if (activePill) {
+        // Alternar entre las dos
+        nuevaPill = [...pills].find(p => p !== activePill);
+      } else {
+        // Si no hay ninguna activa, activamos la primera
+        nuevaPill = pills[0];
+      }
+
+      if (nuevaPill) nuevaPill.click(); // simula el click para reutilizar tu lógica
+    }
+  });
+
+
+
+  // Funciones para manejar el pseudo-modal
+  function mostrarPseudoModal(id) {
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function cerrarPseudoModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  document.getElementById("buscarRegistro").addEventListener("input", function () {
+    const valorBusqueda = this.value.trim().toLowerCase();
+
+    if (modoBusqueda === 'tramites') {
+      if (gridApi) {
+        gridApi.setGridOption('quickFilterText', valorBusqueda);
+      }
+    } else if (modoBusqueda === 'empresas') {
+      const data = dataRegular.additionalData;
+      const modal = document.getElementById('pseudoModalEmpresas');
+      if (modal && modal.style.display !== 'flex') {
+        mostrarPseudoModal('pseudoModalEmpresas');
+      }
+ 
+      const coincidencias = data.filter(item => {
+        const nombre = item.empresa?.toLowerCase() || "";
+        const cuit = item.cuit || "";
+        const expediente = item.expediente || "";
+        return nombre.includes(valorBusqueda) || cuit.includes(valorBusqueda) || expediente.includes(valorBusqueda);
+      });
+
+      const filtroRegistro = document.getElementById("filtro-empresa-dateas");
+      if (coincidencias.length > 0) {
+        // Mostrar empresas coincidentes como opciones del select
+        populateUniqueOptions(filtroRegistro, coincidencias, "empresa", {
+          sortAlphabetically: false
+        });
+
+        llenarFormulario(coincidencias[0].empresa);
+      } else {
+        // Vaciar el select si no hay coincidencias
+        filtroRegistro.innerHTML = '';
+      }
+    }
+  });
+
+
+
+
+  function aplicarFiltrosDesdeSelectores() {
+    try {
+      const valorBusqueda = document.getElementById("buscarRegistro")?.value.trim().toLowerCase();
+
+      if (valorBusqueda) {
+        gridApi.setQuickFilter(valorBusqueda);
+      } else {
+        const filterModel = {};
+        const filtros = {
+          "filtro-nombre": columToTable[0].field,
+          "filtro-empresa": columToTable[1].field,
+          "filtro-tramite": columToTable[4].field,
+          "filtro-estado": columToTable[6].field
+        };
+
+        Object.entries(filtros).forEach(([filtroId, field]) => {
+          const filtroValor = document.getElementById(filtroId)?.value || "";
+          if (filtroValor && filtroValor !== "Todas las opciones") {
+            filterModel[field] = { type: 'equals', filter: filtroValor };
+          }
+        });
+
+        const filtroSubestadoCheckbox = document.getElementById("filtro-subestado");
+        if (filtroSubestadoCheckbox?.checked) {
+          filterModel[columToTable[7].field] = {
+            type: 'contains',
+            filter: 'abierta'
+          };
+        }
+
+        const filtroPresentacionPendienteCheckbox = document.getElementById("filtro-presentacionPendiente");
+        if (filtroPresentacionPendienteCheckbox?.checked) {
+          filterModel[columToTable[8].field] = {
+            type: 'contains',
+            filter: 'Tiene Actividades Pendientes'
+          };
+        }
+
+        gridApi.setFilterModel(filterModel);
+      }
+
+      const datosFiltrados = obtenerDatosFiltrados();
+      console.log("Datos Filtrados:", datosFiltrados);
+
+    } catch (error) {
+      console.error("Error al aplicar filtros:", error);
+    }
+  }
+
+
+  function obtenerDatosFiltrados() {
+    const datosFiltrados = [];
+
+    gridApi.forEachNodeAfterFilterAndSort(node => {
+      datosFiltrados.push(node.data);
+    });
+
+    return datosFiltrados;
+  }
+
+
+  function valoresEnFilters(dataSet) {
+    // Mapa que asocia los nombres de los filtros con las propiedades del objeto
+    const camposMap = {
+      "nombre": "Analista Asignado (evaluador)",
+      "empresa": "Razón social",
+      "cuit": "Cuit",
+      "expediente": "Número de expediente",
+      "tramite": "Tipo de Trámite",
+      "fecha": "Fecha Cambio Estado",
+      "estado": "Estado"
+    };
+
+    // Iterar sobre cada campo de filtro y poblar las opciones
+    Object.entries(camposMap).forEach(([filtro, propiedad]) => {
+      let element = document.getElementById('filtro-' + filtro);
+
+      if (element) {
+        console.log(`Poblando opciones para ${filtro}`); // Mensaje de depuración
+
+        // Llamar a populateUniqueOptions con el elemento select y dataSet
+        populateUniqueOptions(element, dataSet, propiedad, {
+          includeAll: true,
+          allText: "Todas las opciones",
+          sortAlphabetically: true
+        });
+      } else {
+        console.warn(`Elemento con id filtro-${filtro} no encontrado.`);
+      }
+    });
+  }
+
+  const input = document.getElementById('buscarRegistro');
+  const pills = document.getElementById('searchPills');
+
+  // Mostrar pills al hacer foco
+  input.addEventListener('focus', () => {
+    pills.classList.remove('d-none');
+  });
+
+  // Ocultar pills al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target) && !pills.contains(e.target)) {
+      pills.classList.add('d-none');
+    }
+  });
+
+  /* DRAGEABLE PSEUDO-MODAL */
+  function makePseudoModalDraggable(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    
+    const header = modal.querySelector('.modal-header');
+    const dialog = modal.querySelector('.pseudo-modal-dialog');
+    
+    if (!header || !dialog) return;
+    
+    let isDragging = false;
+    let offset = { x: 0, y: 0 };
+
+    // Cambiar el cursor para indicar que se puede arrastrar
+    header.style.cursor = 'move';
+
+    // Cuando el usuario hace clic en el encabezado
+    header.addEventListener('mousedown', (e) => {
+      // Evitar arrastrar al hacer clic en botones dentro del header
+      if (e.target.closest('button')) return;
+      
+      isDragging = true;
+      const rect = dialog.getBoundingClientRect();
+      offset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+      
+      // Cambiar estilos para preparar el arrastre
+      dialog.style.transition = 'none'; // Desactivar transiciones durante el arrastre
+    });
+
+    // Cuando el usuario mueve el ratón
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      // Actualizar posición
+      dialog.style.position = 'fixed';
+      dialog.style.margin = 0;
+      dialog.style.left = `${e.clientX - offset.x}px`;
+      dialog.style.top = `${e.clientY - offset.y}px`;
+      
+      // Asegurar que el diálogo permanezca visible
+      const maxX = window.innerWidth - dialog.offsetWidth;
+      const maxY = window.innerHeight - dialog.offsetHeight;
+      
+      const left = parseInt(dialog.style.left);
+      const top = parseInt(dialog.style.top);
+      
+      if (left < 0) dialog.style.left = '0px';
+      if (top < 0) dialog.style.top = '0px';
+      if (left > maxX) dialog.style.left = `${maxX}px`;
+      if (top > maxY) dialog.style.top = `${maxY}px`;
+    });
+
+    // Cuando el usuario suelta el ratón
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        dialog.style.transition = ''; // Restaurar transiciones
+      }
+    });
+  }
+
+  // Llamar a la función después de que el DOM esté completamente cargado
+  document.addEventListener('DOMContentLoaded', function() {
+    makePseudoModalDraggable('pseudoModalEmpresas');
+  });
+
+
+</script>

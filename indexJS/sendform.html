@@ -1,6 +1,10 @@
 <script>
-    function validarFormulario() {
+    function validarFormulario(botonOriginal, botonLoading) {
+
+        loadingCharge(botonOriginal, botonLoading);
+
         const form = document.getElementById('crearUsuario');
+        form.classList.add('blur');
         const getFormValue = (id) => form.elements[id]?.value || '';
         const getInnerHTML = (id) => document.getElementById(id)?.innerHTML || '';
 
@@ -46,7 +50,12 @@
         if (empresa.id !== "") {
             const successHandler = (result) => {
                 //document.getElementById('tableBody-usuarios').innerHTML = '';
+                GetData();
+                alert('Se envió con éxito');
+                form.classList.remove('blur');
+                loadingCharge(botonLoading, botonOriginal);
                 form.reset();
+                document.getElementById('offcanvasRight').classList.remove('show')
             };
             
             if (typeof google !== 'undefined' && google.script && google.script.run) {

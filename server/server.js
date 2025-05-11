@@ -177,7 +177,7 @@ function getData() {
             disponibleEmision: disponibleEmision,
             informadoAfip: informadoAfip,
             observaciones: observaciones,
-            carpetaEmpresa: carpetaEmpresa,
+            carpetaEmpresa: carpetaEmpresa, 
 
         });
     });
@@ -359,7 +359,7 @@ function guardarFormulario(empresa) {
     }
 
     // Revisado handling
-    if (empresa.revisado && !currentValues.valorRevisado && !currentValues.revisorfinal) {
+    if (empresa.revisionLegal && !currentValues.valorRevisado && !currentValues.revisorfinal) {
         updates.push({ row: fila, col: 46, value: new Date() });
         updates.push({ row: fila, col: 47, value: AsignarUsuarios.asignacionLec('Revisor', '', tableName) });
     }
@@ -371,7 +371,7 @@ function guardarFormulario(empresa) {
 
     // Revi1266 handling
     if ((empresa.revi1266 && empresa.revi1266 !== 'FALSE' && empresa.revi1266 !== false) && !currentValues.valor1266) {
-        updates.push({ row: fila, col: 63, value: empresa.revi1266 });
+        updates.push({ row: fila, col: 63, value: 'TRUE' });
     }
 
     // Map of field data to update
@@ -429,6 +429,32 @@ function guardarFormulario(empresa) {
 
     SpreadsheetApp.flush();
     return true;
+}
+
+function getRegistro() {
+
+  const ss = SpreadsheetApp.openById("1iGmEB8l0NYsoUuGED1F1Mj8uglg3Wpoah4BiBygLHIU");
+  const hoja = ss.getSheetByName("Registro Empresas LEC");
+  const rango = hoja.getRange(2, 1, hoja.getLastRow() - 1, hoja.getLastColumn()).getDisplayValues();
+
+  const arreglo = rango.map(i => {
+    const cuit = i[1];
+    const rl = i[8];
+    const periodo = (i[21]).replace(/[^a-zA-Z ]/g, "").trim().replace(" ", " - ");
+    let ifActo = (i[15]).slice(0, 2) === "RS" ? "Resolución" : "Disposición";
+    const numActo = i[16];
+    const fechaInscripcion = i[19];
+    const provincia = i[12];
+    const correo = i[6];
+    const actividad = i[11];
+
+
+
+    return [cuit, rl, periodo, ifActo, numActo, fechaInscripcion, provincia, correo, actividad]
+  });
+
+  return arreglo;
+
 }
 
 

@@ -20,15 +20,6 @@
 <link rel="stylesheet" href="sweetalert2.min.css">
 
 <style>
-  /* COLOR GEMINI GOOGLE */
-  :root {
-    --googledevai-blue: #4285F4;
-    --googledevai-cyan: #34A853;
-    --googledevai-purple: #9b51e0;
-    --googledevai-red: #8e24aa;
-  }
-
-
   /* geist-sans-latin-400-normal */
   @font-face {
     font-family: 'Geist Sans';
@@ -223,9 +214,10 @@
   }
 
   ::placeholder {
+    font-size: 0.8em !important;
+    font-family: 'Space Mono', monospace;
     color: cornflowerblue;
-    font-size: 0, 8 em;
-    font-style: italic;
+
   }
 
   .spinner {
@@ -241,7 +233,7 @@
   }
 
   .form-control {
-    background: #F4F6F6
+    //background: #F4F6F6
   }
 
   #buscarRegistro {
@@ -281,7 +273,7 @@
   }
 
   .input-group-addon i {
-    color: #999;
+    color: #000;
   }
 
   .form-control:focus::placeholder {
@@ -362,7 +354,7 @@
   }
 
   .accordion-button[aria-expanded="true"] {
-    background-color: #9284be17;
+    background-color: #cac8ff;
     color: black;
     box-shadow: none;
     //font-weight: bold
@@ -398,7 +390,7 @@
 
   .ag-root-wrapper {
     border: none;
-    
+
   }
 
   .ag-cell {
@@ -411,12 +403,53 @@
   } */
 
 
+  :root {
+    --googledevai-blue: #4285F4;
+    --googledevai-cyan: #34A853;
+    --googledevai-purple: #9b51e0;
+    --googledevai-red: #8e24aa;
+  }
+
+  #headerTableS {
+    background: linear-gradient(90deg,
+        var(--googledevai-blue) 15%,
+        var(--googledevai-cyan) 40%,
+        var(--googledevai-purple) 65%,
+        var(--googledevai-red) 90%,
+        var(--googledevai-blue) 100%);
+    background-size: 400% 100%;
+    animation: gradientAnimation 10s infinite alternate;
+    color: white;
+    padding: 1em 0;
+  }
+
+  /* GEM sin animación */
+
+/*   :root {
+    --googledevai-blue: #4285F4;
+    --googledevai-cyan: #34A853;
+    --googledevai-purple: #9b51e0;
+    --googledevai-red: #8e24aa;
+  }
+
   #headerTableS {
     background: linear-gradient(90deg,
         var(--googledevai-blue) 50%,
         var(--googledevai-cyan),
         var(--googledevai-purple),
         var(--googledevai-red));
+    color: white;
+    padding: 1em 0;
+  } */
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 100% 50%;
+    }
   }
 
   /**** ANIMACIÓN DEL CHARACTER  ****/
@@ -590,7 +623,7 @@
   /* STILOS CHATBOT */
 
   #chatbot-container {
-    display: none; 
+    display: none;
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -611,6 +644,134 @@
     right: 20px;
     z-index: 1000;
     transition: all 0.3s ease-in-out;
+  }
+
+  /* DARK MODE */
+
+  body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+  }
+
+  body.dark-mode main {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+  }
+
+  body.dark-mode .navbar {
+    background-color: #1f1f1f !important;
+    border-color: #333 !important;
+  }
+
+  body.dark-mode .nav-link,
+  body.dark-mode .navbar-brand,
+  body.dark-mode .btn {
+    color: #e0e0e0 !important;
+    //background-color: #2c2c2c !important;
+    border-color: #444 !important;
+  }
+
+  body.dark-mode .form-control {
+    background-color: #2c2c2c !important;
+  }
+
+  body.dark-mode input::placeholder {
+    color: #aaa !important;
+  }
+
+
+  /* pildoras buscador */
+
+  #searchPills {
+    top: 110%;
+    /* Justo debajo del input */
+    left: 0;
+    margin-top: 2px;
+    z-index: 1050;
+    padding: 2px 4px;
+    background-color: none;
+    border-radius: 6px;
+    //box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #searchPills .pill {
+    font-size: 0.60rem;
+    /* Tamaño pequeño */
+    padding: 0.2rem 0.5rem;
+    /* Estilo pill */
+    border-radius: 50px;
+    border: 1px black;
+    //background-color: white;
+  }
+
+
+
+
+  /* REGSTROMODALCUSTOM */
+
+  .pseudo-modal {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+    z-index: 1050;
+    overflow: hidden;
+    /* quitamos el scroll general del modal */
+    pointer-events: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+  }
+
+  .pseudo-modal-dialog {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1140px;
+    /* modal-xl */
+    pointer-events: auto;
+    min-height: auto;
+  }
+
+  /* Contenido principal del modal */
+  .pseudo-modal .modal-content {
+    width: 70%;
+    margin: 0 auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.3rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+    /* Distribución tipo flex para permitir scroll interno solo en el body */
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    /* altura máxima del modal total */
+  }
+
+  /* El body ahora ocupa el espacio restante y permite scroll */
+  .pseudo-modal .modal-body {
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  /* Header y footer sin cambios, ocupan espacio fijo */
+  .pseudo-modal .modal-header,
+  .pseudo-modal .modal-footer {
+    flex-shrink: 0;
+  }
+
+  /* BLUR PARA FORMS */
+
+  .blur {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .d-none {
+    display: none !important;
   }
 
 </style>

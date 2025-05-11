@@ -1,10 +1,10 @@
 function getArtwork() {
   // Filtrar por obras de arte moderno (aproximadamente desde 1850 hasta 1970)
-  const url = 'https://api.artic.edu/api/v1/artworks?' + 
+  const url = 'https://api.artic.edu/api/v1/artworks?' +
     'fields=id,title,image_id,date_display,artist_display,medium_display,style_title' +
     '&query[term][style_title]=technology' +
     '&limit=100';
-  
+
   try {
     const response = UrlFetchApp.fetch(url);
     const json = JSON.parse(response.getContentText());
@@ -35,3 +35,12 @@ function getArtwork() {
     return null;
   }
 }
+
+
+
+
+
+
+
+
+

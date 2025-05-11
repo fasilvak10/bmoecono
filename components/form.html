@@ -1,9 +1,10 @@
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasRight"
   aria-labelledby="offcanvasRightLabel">
 
-  <div class="offcanvas-header">
+  <div class="offcanvas-header text-bg-primary" style="font-family: 'Space Mono', monospace;">
     <h1 class="modal-title fs-5 pe-3" id="tipoTramite">Inscripcion</h1>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <!-- <h1 id="nombreEmpresa" class="modal-title fs-5 pe-3 text-align-center">Empresa</h2> -->
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
 
 
@@ -11,7 +12,7 @@
     <div class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center w-100">
 
 
-      <div id="" class="justify-content-center text-center">
+      <div id="" class="justify-content-center text-center text-bg-primary-subtle" style="font-family: 'Space Mono', monospace;" >
         <h2 id="nombreEmpresa" class="mb-3">Empresa</h2>
         <!-- <hr class="d-flex"> -->
         <!--         <div class="d-flex justify-content-around">
@@ -26,11 +27,11 @@
         </div> -->
       </div>
 
-      <form class="mt-2" name="crearUsuario" id="crearUsuario" style="text-center">
+      <form class="mt-2" name="crearUsuario" id="crearUsuario" style="text-center;">
 
         <input type="text" class="form-control" placeholder="#" aria-label="empresaID" name="empresaID" id="empresaID" hidden>
-        <input type="tezt" class="bt-2" id="cuit" name="cuit" hidden>cuit</p>
-        <input type="text" id="expediente" name="expediente" hidden>expediente</p>
+        <input type="text" class="bt-2" id="cuit" name="cuit" hidden >
+        <input type="text" id="expediente" name="expediente" hidden >
 
         <div class="form-floating form-control-sm">
           <select class="form-select" aria-label="actividad" id="actividad" name="actividad">
@@ -40,7 +41,6 @@
             </select>
           <label for="actividad">Actividad Principal</label>
         </div>
-
 
         <div class="row g-2 mt-2" id="">
           <div class="col-md">
@@ -56,7 +56,6 @@
             </div>
           </div>
         </div>
-
 
         <div id="conciliacionesHidden" hidden>
           <p class="ps-3 text-center">Conciliaciones</p>
@@ -204,7 +203,14 @@
           <div id="porcentajeExpoCalculadoAnio2" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
         </div>
 
+        <!-- MM3A -->
+
         <div id="requisitosAdicionales" hidden>
+
+          <div id="" class="form-check form-switch form-check-reverse mb-3">
+            <input class="form-check-input" type="checkbox" id="microMenor" onchange="requisitosMicroMenor(this, document.getElementById('flex-dato-microMenor'))">
+            <label class="form-check-label" for="microMenor">Micro Menor a 3 Años</label>
+          </div>
 
           <p class="text-center">Requisitos Adicionales</p>
           <div class="row g-2 mb-2">
@@ -253,8 +259,6 @@
           </div>
 
         </div>
-
-
 
         <div class="form-check form-switch form-check-reverse mb-3">
           <input class="form-check-input" type="checkbox" id="flexRevisionLegal" onchange="updateTimestamp(this, document.getElementById('fechaRevisionLegal'),document.getElementById('revisorRealLegal'))">
@@ -343,13 +347,13 @@
   </div>
 
   <div class="offcanvas-footer p-4 d-flex row align-items-center g-2" style="font-size: 0.8em">
-    <button type="button" class="btn btn-sm btn-primary" onclick="validarFormulario()" id="guardarUsuario0">Guardar</button>
-    <button class="btn btn-primary d-none btnLoading" type="button"     disabled id="LoadingButton0" >
+    <button type="button" class="btn btn-sm btn-primary" onclick="validarFormulario(this, document.getElementById('LoadingButton0'))" id="guardarUsuario0">Guardar</button>
+    <button class="btn btn-sm btn-primary d-none btnLoading" type="button"     disabled id="LoadingButton0" >
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Loading...
         </button>
     <button type="button" class="btn btn-sm btn-outline-secondary button-edit" id="" role="button" onclick="crearArchivos(document.getElementById('crearUsuario'))"> <i class="bi bi-layers-fill"></i></button>
-    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" onclick="abrirEnlace(this)" id="carpetaEmpresaAcceso" href="https://lanacion.com"><i class="bi bi-folder-fill button-folder" role="button" ></i></button>
+    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" onclick="abrirEnlace(this)" id="carpetaEmpresaAcceso" href=""><i class="bi bi-folder-fill button-folder" role="button" ></i></button>
   </div>
 
   <div class="resize-bar"></div> <!-- Barra de arrastre -->
