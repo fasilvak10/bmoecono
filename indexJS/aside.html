@@ -1,0 +1,35 @@
+<script>
+  /* <!-- Funciones calculadora --> */
+
+  function calculate(fechaInicial, dias, resultado) {
+
+    resultado.innerHTML = 'Cargando... '
+    var agregarDias = parseInt(dias, 10);
+
+    google.script.run.withSuccessHandler(function(result) {
+      var resultDate = new Date(result);
+          resultado.innerHTML = 'Fecha resultante: ' + resultDate.toLocaleDateString();
+        }).withFailureHandler(function(error) {
+          console.log("Error: " + error.message);
+          resultado.innerHTML = 'Error: ' + error.message;
+    }).calculadoraDiasHabiles(fechaInicial, agregarDias);
+  } 
+  
+  function esFeriado(date, feriados) {
+    for (var i = 0; i < feriados.length; i++) {
+      if (feriados[i].toDateString() == date.toDateString()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /* Funciones accesos y modelos */
+
+  function toggleVisibility(element, id) {
+    console.log('HOlA FAQUITOOO')
+    const hiddenDiv = document.getElementById(id);
+    hiddenDiv.classList.toggle("show");
+  }
+  
+</script> 

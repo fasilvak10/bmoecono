@@ -1,7 +1,7 @@
 function getData() {
     const ss = SpreadsheetApp.openById('1Ux_aSHfhQhmKIONJTOvqXzdpof80zgPzPfamQt_DqDg');
     //const sheet = ss.getSheetByName('main');
-    const sheet = ss.getSheetByName('Copia de main');
+    const sheet = ss.getSheetByName('main');
     const usuariosSheet = ss.getSheetByName("user");
 
     const allData = sheet.getDataRange().getDisplayValues();
@@ -27,7 +27,8 @@ function getData() {
         'Fecha Cambio Estado',
         'Estado',
         'Sub Estado',
-        'Tareas Pendientes'
+        'Tareas Pendientes',
+        'Informado 1266'
     ];
 
     // Mapea los datos para AG Grid y también prepara datos adicionales
@@ -119,7 +120,9 @@ function getData() {
             ulMovimiento,
             estado,
             subestado,
-            tareaPendiente
+            tareaPendiente,
+            informadoAfip
+
         ]);
 
         // Datos adicionales que se van a usar en el formulario
@@ -185,67 +188,136 @@ function getData() {
     return { headers: headers, data: data, additionalData: additionalData };
 }
 
-
+/* PARA MELA */
 
 function getCierres() {
-
     const ssex = SpreadsheetApp.openById('1EtfdMDuLgLr5KZVnjxGduUWH31ABUjgtmiAMUZCzW9c');
     const bienal = ssex.getSheetByName('principal_cierres');
     const rango = bienal.getRange(1, 1, bienal.getLastRow(), bienal.getLastColumn()).getDisplayValues();
 
-    const [header, ...data] = rango.map(i => {
-        let id = i[6];
-        let analista = i[7];
-        let razon = i[2];
-        let expediente = i[6];
-        let estado = i[19];
-        let fechapresentacion = i[4];
-        let cuit = i[1];
-        let actividad = "";
-        let observaciones = i[25];
-        const conclusion = i[3];
-        const ulrevisor = i[10];
-        const fechaRevision = i[11];
-        const informetecnico = i[12];
-        const pvcierre = i[13];
-        const fechapvcierre = i[14];
-        const fecharevifinal = i[17];
-        const revisorFinal = i[20];
-        const conciTasa = i[16];
-        const conciFonpec = i[15];
-        const subestado = i[18];
-        const fechamodificacion = i[22];
-        const actividadPendiente = i[27];
-        let responsable;
-        const diasPlazo = i[28];
-        const montoConsolidadoAjuste = i[31];
-        const estadoFinalCierre = i[32];
-        const fechaVencimientoPlazo = i[33];
-        const conclusionTecnico = i[34];
+    let additionalData = [];
 
+    function formatFecha(fecha) {
+        return fecha && fecha.trim() !== '' ? fecha.split('/').reverse().join('-') : '';
+    }
+
+    const [header, ...data] = rango.map(i => {
+        let cuit = i[1];
+        let razon = i[2];
+        let periodoDesde = i[4];
+        let periodoHasta = i[5];
+        let observacionAuditoria = i[3];
+
+        let cuerpoAuditor = i[6];
+        let expediente = i[7];
+        let estado = i[8];
+        const fechamodificacion = i[9];
+        const subestado = i[10];
+        let analista = i[11];
+        let fechapresentacion = i[12];
+        const asesorLegal = i[13];
+        const fechaAsignacionLegal = i[14];
+        const fechaRevisionLegal = i[15];
+        const revisorFinal = i[16];
+        const fechaRevisionfinal = i[17];
+        let observaciones = i[18];
+        const actividadPendiente = i[19];
+
+        const revisorRealLegal = i[38];
+        const revisorRealFinal = i[39];
+
+        const conciFonpec = i[20];
+        const conciTasa = i[21];
+        const informetecnico = i[23];
+        const pvcierre = i[24];
+        const fechapvcierre = i[25];
+        const diasPlazo = i[26];
+        const fechaVencimientoPlazo = i[27];
+        const conclusionTecnico = i[28];
         const montoAfavor = i[29];
         const montoEnContra = i[30];
+        const montoConsolidadoAjuste = i[31];
+        const estadoFinalCierre = i[32];
 
-        if ((ulrevisor != '' && estado == 'Revisión Cierre Bienal' && fechaRevision == '') || (ulrevisor != '' && estado == 'Informe Técnico Firmado Cierre Bienal' && fechaRevision != '')) {
-            responsable = ulrevisor;
-        } else if (ulrevisor != '' && estado == 'Revisión Cierre Bienal' && fechaRevision != '' && fecharevifinal == '') {
+        const cierreEjercicio = i[35];
+
+        let carpeta = i[33];
+        let idCarpeta = i[34];
+
+        // Lógica optimizada para responsable
+        let responsable = analista; // valor por defecto
+
+        const tieneAsesorLegal = asesorLegal && asesorLegal.trim() !== '';
+        const sinFechaRevisionLegal = !fechaRevisionLegal || fechaRevisionLegal.trim() === '';
+        const conFechaRevisionLegal = fechaRevisionLegal && fechaRevisionLegal.trim() !== '';
+        const sinFechaRevisionFinal = !fechaRevisionfinal || fechaRevisionfinal.trim() === '';
+
+        if (
+            tieneAsesorLegal &&
+            (
+                (estado === 'En Revisión' && sinFechaRevisionLegal) ||
+                (estado === 'Informe Técnico Firmado' && conFechaRevisionLegal)
+            )
+        ) {
+            responsable = asesorLegal;
+        } else if (
+            tieneAsesorLegal &&
+            estado === 'En Revisión' &&
+            conFechaRevisionLegal &&
+            sinFechaRevisionFinal
+        ) {
             responsable = revisorFinal;
-        } else {
-            responsable = analista;
         }
 
-        let carpeta = i[35];
+        additionalData.push({
+            empresa: razon,
+            cuit: cuit,
+            expediente: expediente,
+            observacionAuditoria: observacionAuditoria,
+            cuerpoAuditor: cuerpoAuditor,
+            analista: analista,
+            ulMovimiento: fechamodificacion,
+            tramite: 'Cierre Auditoría',
 
-        /*         const findteam = dataUsuarios.find(r => r[0] === responsable);
-                const equipo = findteam ? findteam[7] : null; */
+            estadoEmpresa: estado,
+            plazoSubsanacion: fechaVencimientoPlazo,
+            cantidadDiasProvi: diasPlazo,
 
-        return [responsable, razon, cuit, expediente, conclusion, fechamodificacion, estado, subestado, actividadPendiente];
+            periodoIncial: periodoDesde,
+            periodoFinal: periodoHasta,
+
+            fechaRevisionLegal: formatFecha(fechaRevisionLegal),
+            asesorLegal: asesorLegal,
+            fechaRevisionFinal: formatFecha(fechaRevisionfinal),
+            revisorFinal: revisorFinal,
+
+            revisorRealLegal: revisorRealLegal,
+            revisorRealFinal: revisorRealFinal,
+
+            iftecnico: informetecnico,
+            provi: pvcierre,
+            fechaProvi: formatFecha(fechapvcierre),
+            conclusionTecnico: conclusionTecnico,
+
+            observaciones: observaciones,
+            carpetaEmpresa: carpeta,
+
+            conciFonpec: conciFonpec,
+            conciTasa: conciTasa,
+            fechaVencimientoPlazo: fechaVencimientoPlazo,
+            montoAfavor: montoAfavor,
+            montoEnContra: montoEnContra,
+            montoConsolidadoAjuste: montoConsolidadoAjuste,
+            estadoFinalCierre: estadoFinalCierre,
+        });
+
+        return [responsable, razon, cuit, expediente, observacionAuditoria, fechamodificacion, estado, subestado, actividadPendiente];
     });
 
-    //console.log({ headers: header, data: data }) 
-    return { headers: header, data: data }
-
+    //console.log({ headers: header, data: data, additionalData: additionalData });
+    return { headers: header, data: data, additionalData: additionalData };
 }
+
 
 
 function traerUsuarios() {
@@ -259,13 +331,26 @@ function traerUsuarios() {
         let mail = i[1];
         let funcion = i[4];
         let rol = i[6];
-        let equipo = i[7]
-        let estado = i[5]
+        let equipo = i[7];
+        let estado = i[5];
+        let linkCharacter = i[15];
+        let timeSession = i[9]
 
-        return [nombre, mail, funcion, rol, equipo, estado]
+
+
+        return [nombre, mail, funcion, rol, equipo, estado, linkCharacter, timeSession]
     })
+
     return { headers: header, data: data }
 
+}
+
+function verificarSesionEnServidor() {
+  // Suponiendo que tenés el valor válido en una celda de una hoja
+  const ss = SpreadsheetApp.openById('1Ux_aSHfhQhmKIONJTOvqXzdpof80zgPzPfamQt_DqDg').getSheetByName('user');
+  const sessionActual = ss.getRange("Q2").getValue(); // o de donde corresponda
+
+  return sessionActual;
 }
 
 function verificarPassword(form) {
@@ -281,6 +366,14 @@ function verificarPassword(form) {
         const tarea = i[4];
         const equipo = i[7];
         const completeName = i[3];
+        let session = i[8];
+        let timeSession = i[9];
+        let e_click = i[10];
+        let access_day = i[11];
+        let timers = i[12];
+        let checkin = i[13];
+        let character_type = i[14];
+        let linkCharacter = i[15];
 
         if (password === form.exampleInputPassword1) {
             const usuario = {
@@ -288,7 +381,8 @@ function verificarPassword(form) {
                 rol,
                 tarea,
                 equipo,
-                completeName
+                completeName,
+                session, timeSession, e_click, access_day, timers, checkin, character_type, linkCharacter
             }
             return usuario;
         } else {
@@ -309,14 +403,14 @@ function verificarPassword(form) {
 function guardarFormulario(empresa) {
     console.log(empresa)
     const ss = SpreadsheetApp.openById('1Ux_aSHfhQhmKIONJTOvqXzdpof80zgPzPfamQt_DqDg');
-    const main = ss.getSheetByName("Copia de main");
-    const rb = ss.getSheetByName('RB-23');
+    const main = ss.getSheetByName("main");
+    const rb = ss.getSheetByName('RB-25');
     const tableName = 'Anuales LEC';
 
     const buscarFila = (id) => {
         const ids = main.getRange(2, 1, main.getLastRow() - 1, 4).getValues().map(row => row[2]);
         const index = ids.indexOf(id);
-        return index !== -1 ? index + 2 : -1; 
+        return index !== -1 ? index + 2 : -1;
     };
 
     const fila = buscarFila(empresa.id);
@@ -359,19 +453,21 @@ function guardarFormulario(empresa) {
     }
 
     // Revisado handling
-    if (empresa.revisado && !currentValues.valorRevisado && !currentValues.revisorfinal) {
+    if (empresa.revisionLegal && !currentValues.valorRevisado && !currentValues.revisorfinal) {
         updates.push({ row: fila, col: 46, value: new Date() });
+        updates.push({ row: fila, col: 81, value: empresa.revisorRealLegal });
         updates.push({ row: fila, col: 47, value: AsignarUsuarios.asignacionLec('Revisor', '', tableName) });
     }
 
     // RevisionFinal handling
     if ((empresa.revisionFinal && empresa.revisionFinal !== 'FALSE') && !currentValues.valorRevision) {
         updates.push({ row: fila, col: 49, value: new Date() });
+        updates.push({ row: fila, col: 82, value: empresa.revisorRealFinal });
     }
 
     // Revi1266 handling
     if ((empresa.revi1266 && empresa.revi1266 !== 'FALSE' && empresa.revi1266 !== false) && !currentValues.valor1266) {
-        updates.push({ row: fila, col: 63, value: empresa.revi1266 });
+        updates.push({ row: fila, col: 63, value: 'TRUE' });
     }
 
     // Map of field data to update
@@ -414,7 +510,135 @@ function guardarFormulario(empresa) {
         main.getRange(update.row, update.col).setValue(update.value);
     });
 
-    // Add record to RB-23 sheet
+    // Add record to RB-25 sheet
+    rb.appendRow([
+        empresa.id,
+        empresa.empresa,
+        empresa.cuit,
+        empresa.estado,
+        empresa.dataUser?.completeName || '',
+        empresa.dataUser?.rol || '',
+        empresa.dataUser?.tarea || '',
+        empresa.dataUser?.equipo || '',
+        new Date()
+    ]);
+
+    SpreadsheetApp.flush();
+    return true;
+}
+
+function guardarFormularioCierre(empresa) {
+    console.log(empresa);
+    const ss = SpreadsheetApp.openById('1EtfdMDuLgLr5KZVnjxGduUWH31ABUjgtmiAMUZCzW9c');
+    const main = ss.getSheetByName("principal_cierres");
+    const rb = ss.getSheetByName('RB-25');
+    const tableName = 'Anuales LEC';
+
+    const buscarFila = (id) => {
+        const ids = main.getRange(2, 8, main.getLastRow() - 1, 1).getValues().flat(); // Columna H
+        const index = ids.indexOf(id);
+        return index !== -1 ? index + 2 : -1;
+    };
+
+    const fila = buscarFila(empresa.id);
+    if (fila === -1) {
+        console.error("ID no encontrado en la hoja.");
+        return false;
+    }
+
+    const valoresActuales = main.getRange(fila, 1, 1, main.getLastColumn()).getValues()[0];
+    const updates = [];
+
+    // Campos comunes
+    const campos = {
+        periodoIncial: 5,
+        periodoFinal: 6,
+        estado: 9,
+        revisionLegal: 16,
+        revisionFinal: 18,
+        iftecnico: 24,
+        actoOprovi: 25,
+        fechaProvi: 26,
+        observaciones: 19,
+        revisorLegal: 14,
+        revisorFinal: 17,
+        cuerpoAuditor: 7,
+        observacionAuditoria: 4,
+        cantidadDiasProvi: 27,
+        conclusionTecnico: 29,
+        montoAfavor: 30,
+        montoEnContra: 31,
+        estadoFinalCierre: 33,
+        revisorRealLegal: 39,
+        revisorRealFinal: 40,
+    };
+
+    // Estado y lógica especial
+    /* aca está el error en mi opinión fs.  */
+    const estadoActual = valoresActuales[campos.estado - 1];
+    const revisorLegalActual = valoresActuales[campos.revisorLegal - 1];
+    const revisorFinalActual = valoresActuales[campos.revisorFinal - 1];
+    const valorRevisado = valoresActuales[campos.revisionLegal - 1];
+    const valorRevision = valoresActuales[campos.revisionFinal - 1];
+
+    if (empresa.estado && empresa.estado !== estadoActual) {
+        updates.push({ row: fila, col: campos.estado, value: empresa.estado });
+        updates.push({ row: fila, col: 10, value: new Date() }); // Asumimos columna 10 = fecha estado
+
+        // Estado lógico
+        if (!['Aprobado', 'Solicitud de Baja Otorgada'].includes(empresa.estado)) {
+            if (empresa.estado === 'En Revisión' && !revisorLegalActual) {
+                const nuevoRevisor = AsignarUsuarios.asignacionLec('Legal', '', tableName);
+                updates.push({ row: fila, col: campos.revisorLegal, value: nuevoRevisor });
+                updates.push({ row: fila, col: 15, value: new Date() }); // fecha asignación legal, col 17
+                updates.push({ row: fila, col: 10, value: new Date() });
+            } else if (empresa.estado === 'Providencia Notificada') {
+                updates.push({ row: fila, col: campos.fechaProvi, value: empresa.fechaProvi });
+                updates.push({ row: fila, col: 27, value: empresa.cantidadDiasProvi });
+                updates.push({ row: fila, col: 10, value: new Date() });
+            }
+
+        }
+
+    }
+
+    updates.push({ row: fila, col: campos.estadoFinalCierre, value: empresa.estadoFinalCierre });
+
+
+
+    // Asignación revisión legal
+    if (empresa.revisionLegal && !valorRevisado && !revisorFinalActual) {
+        updates.push({ row: fila, col: campos.revisionLegal, value: new Date() });
+        updates.push({ row: fila, col: campos.revisorFinal, value: AsignarUsuarios.asignacionLec('Revisor', '', tableName) });
+        updates.push({ row: fila, col: campos.revisorRealLegal, value: empresa.revisorRealLegal });
+    }
+
+    // Revisión final
+    if (empresa.revisionFinal && !valorRevision) {
+        updates.push({ row: fila, col: campos.revisionFinal, value: new Date() });
+        updates.push({ row: fila, col: campos.revisorRealFinal, value: empresa.revisorRealFinal });
+    }
+
+    // Campos generales
+    for (const campo in campos) {
+        if (['estado', 'revisionLegal', 'revisionFinal', 'revisorLegal', 'revisorFinal', 'estadoFinalCierre', 'fechaProvi', 'cantidadDiasProvi'].includes(campo)) continue;
+
+        const col = campos[campo];
+        const nuevoValor = empresa[campo];
+        const actual = valoresActuales[col - 1];
+        const valorFormateado = typeof nuevoValor === 'boolean' ? nuevoValor.toString() : nuevoValor;
+
+        if (valorFormateado !== '' && valorFormateado !== actual.toString()) {
+            updates.push({ row: fila, col, value: nuevoValor });
+        }
+    }
+
+    // Aplicar updates
+    updates.forEach(update => {
+        main.getRange(update.row, update.col).setValue(update.value);
+    });
+
+    // Registro en hoja RB-25
     rb.appendRow([
         empresa.id,
         empresa.empresa,
@@ -432,6 +656,127 @@ function guardarFormulario(empresa) {
 }
 
 
+function getRegistro() {
+
+    const ss = SpreadsheetApp.openById("1iGmEB8l0NYsoUuGED1F1Mj8uglg3Wpoah4BiBygLHIU");
+    const hoja = ss.getSheetByName("Registro Empresas LEC");
+    const rango = hoja.getRange(2, 1, hoja.getLastRow() - 1, hoja.getLastColumn()).getDisplayValues();
+
+    const arreglo = rango.map(i => {
+        const cuit = i[1];
+        const rl = i[8];
+        const periodo = (i[21]).replace(/[^a-zA-Z ]/g, "").trim().replace(" ", " - ");
+        let ifActo = (i[15]).slice(0, 2) === "RS" ? "Resolución" : "Disposición";
+        const numActo = i[16];
+        const fechaInscripcion = i[19];
+        const provincia = i[12];
+        const correo = i[6];
+        const actividad = i[11];
 
 
 
+        return [cuit, rl, periodo, ifActo, numActo, fechaInscripcion, provincia, correo, actividad]
+    });
+
+    return arreglo;
+
+}
+
+function obtenerArchivosDesdeUrl(urlCarpeta) {
+
+    let ubic = urlCarpeta.split('/').pop();
+    const folder = DriveApp.getFolderById(ubic);
+    const files = folder.getFiles();
+    const resultados = [];
+
+    while (files.hasNext()) {
+        const file = files.next();
+        resultados.push({
+            nombre: file.getName(),
+            url: file.getUrl(),
+            tipo: file.getMimeType()
+        });
+    }
+
+    return (resultados);
+}
+
+function calculadoraDiasHabiles(fechaInicial, agregarDias) {
+    try {
+
+        if (!fechaInicial || isNaN(new Date(fechaInicial))) {
+            throw new Error("Fecha de inicio no válida: " + fechaInicial);
+        }
+        if (isNaN(agregarDias)) {
+            throw new Error("Número de días no válido: " + agregarDias);
+        }
+
+        var sheet = SpreadsheetApp.openById('1RSkpO0MhsaSjaITbMoRr-9vLdLT3Z7ws4FBCmdajM-Q').getSheetByName('Hoja 1');
+        var feriados = sheet.getRange('B:B').getValues().flat().filter(String).map(date => new Date(date));
+
+        var currentDate = new Date(fechaInicial);
+        if (isNaN(currentDate)) {
+            throw new Error("Fecha de inicio no válida: " + fechaInicial);
+        }
+
+        var diasAgregados = 0;
+
+        // Mover la fecha al siguiente día hábil antes de empezar a contar
+        currentDate.setDate(currentDate.getDate() + 1);
+        while (currentDate.getDay() == 0 || currentDate.getDay() == 6 || esFeriado(currentDate, feriados)) {
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        while (diasAgregados < agregarDias) {
+            currentDate.setDate(currentDate.getDate() + 1);
+
+            if (currentDate.getDay() != 0 && currentDate.getDay() != 6 && !esFeriado(currentDate, feriados)) {
+                diasAgregados++;
+            }
+        }
+        return currentDate.toISOString();
+    } catch (error) {
+        throw error;
+    }
+}
+
+function esFeriado(date, feriados) {
+    for (var i = 0; i < feriados.length; i++) {
+        if (feriados[i].toDateString() == date.toDateString()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+function getModels() {
+    const ss = SpreadsheetApp.openById('1Ux_aSHfhQhmKIONJTOvqXzdpof80zgPzPfamQt_DqDg');
+    const modelos = ss.getSheetByName("modelos");
+    const dataModelos = modelos.getDataRange().getValues().filter((row) => row[0] !== "");
+
+
+    return dataModelos;
+}
+
+function selectedCharacter(userName, character, imgSrc){
+
+    console.log(userName)
+    const ss = SpreadsheetApp.openById('1Ux_aSHfhQhmKIONJTOvqXzdpof80zgPzPfamQt_DqDg');
+    const user = ss.getSheetByName("user");
+
+    const buscarFila = (userName) => {
+        const ids = user.getRange(2, 1, user.getLastRow() - 1, 4).getValues().map(row => row[0]);
+        const index = ids.indexOf(userName);
+        return index !== -1 ? index + 2 : -1;
+    };
+
+    const fila = buscarFila(userName);
+    console.log(fila)
+
+    user.getRange(fila, 14).setValue(true);
+    user.getRange(fila, 15).setValue(character);
+    user.getRange(fila, 16).setValue(imgSrc);
+
+    return true;
+}

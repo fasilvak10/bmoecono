@@ -20,15 +20,6 @@
 <link rel="stylesheet" href="sweetalert2.min.css">
 
 <style>
-  /* COLOR GEMINI GOOGLE */
-  :root {
-    --googledevai-blue: #4285F4;
-    --googledevai-cyan: #34A853;
-    --googledevai-purple: #9b51e0;
-    --googledevai-red: #8e24aa;
-  }
-
-
   /* geist-sans-latin-400-normal */
   @font-face {
     font-family: 'Geist Sans';
@@ -65,15 +56,15 @@
   }
 
   .btn-custom:hover {
-    background-color: #9283BE;
+    background-color: #9FE2BF;
     /* Color de fondo cuando el mouse está sobre el botón */
-    color: #E7E7E7;
+    //color: #E7E7E7;
   }
 
   .btn-custom a:hover {
-    background-color: #9283BE;
+    //background-color: #9283BE;
     /* Color de fondo cuando el mouse está sobre el botón */
-    color: #E7E7E7;
+    //color: #E7E7E7;
   }
 
   footer {
@@ -125,6 +116,7 @@
     /* Ajusta la altura según el espacio que ocupe el nav */
     transition: left 0.3s ease;
     /* Animación suave al cambiar la posición */
+    z-index: 1000;
   }
 
   #asideMain.active {
@@ -140,6 +132,7 @@
     /* Ancho de la barra lateral, puedes ajustarlo según tus necesidades */
     padding: 20px;
     box-sizing: border-box;
+
   }
 
   main {
@@ -150,13 +143,20 @@
 
   .login {
     background-color: #f8f9f9;
-    width: 100vw;
-    height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 10000;
+    overflow: auto;
   }
+
+  .small-input {
+    font-size: 0.85em;
+    padding: 8px 10px;
+  }
+
 
   .loading {
     background-color: #154c79;
@@ -223,9 +223,10 @@
   }
 
   ::placeholder {
+    font-size: 0.8em !important;
+    font-family: 'Space Mono', monospace;
     color: cornflowerblue;
-    font-size: 0, 8 em;
-    font-style: italic;
+
   }
 
   .spinner {
@@ -241,7 +242,7 @@
   }
 
   .form-control {
-    background: #F4F6F6
+    //background: #F4F6F6
   }
 
   #buscarRegistro {
@@ -281,7 +282,7 @@
   }
 
   .input-group-addon i {
-    color: #999;
+    color: #000;
   }
 
   .form-control:focus::placeholder {
@@ -362,7 +363,7 @@
   }
 
   .accordion-button[aria-expanded="true"] {
-    background-color: #9284be17;
+    background-color: #cac8ff;
     color: black;
     box-shadow: none;
     //font-weight: bold
@@ -398,7 +399,7 @@
 
   .ag-root-wrapper {
     border: none;
-    
+
   }
 
   .ag-cell {
@@ -410,6 +411,44 @@
     background-color: black;
   } */
 
+  :root {
+    --googledevai-blue: #4285F4;
+    --googledevai-cyan: #34A853;
+    --googledevai-purple: #9b51e0;
+    --googledevai-red: #8e24aa;
+  }
+
+  /* #headerTableS {
+    background: linear-gradient(90deg,
+        var(--googledevai-blue) 15%,
+        var(--googledevai-cyan) 40%,
+        var(--googledevai-purple) 65%,
+        var(--googledevai-red) 90%,
+        var(--googledevai-blue) 100%);
+    background-size: 400% 100%;
+    animation: gradientAnimation 10s infinite alternate;
+    color: white;
+    padding: 1em 0;
+  } */
+
+  /* @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 100% 50%;
+    }
+  } */
+
+  /* GEM sin animación */
+
+  :root {
+    --googledevai-blue: #4285F4;
+    --googledevai-cyan: #34A853;
+    --googledevai-purple: #9b51e0;
+    --googledevai-red: #8e24aa;
+  }
 
   #headerTableS {
     background: linear-gradient(90deg,
@@ -417,7 +456,10 @@
         var(--googledevai-cyan),
         var(--googledevai-purple),
         var(--googledevai-red));
+    color: white;
+    padding: 1em 0;
   }
+
 
   /**** ANIMACIÓN DEL CHARACTER  ****/
   @keyframes float {
@@ -589,18 +631,20 @@
 
   /* STILOS CHATBOT */
 
+
   #chatbot-container {
-    display: none; 
+    display: none;
     position: fixed;
     bottom: 10px;
-    right: 10px;
-    width: 300px;
-    z-index: 1000;
+    left: 10px;
+    width: 500px;
+    z-index: 1200;
     transition: all 0.3s ease-in-out;
+    border: none;
   }
 
   #chatbot-body {
-    height: 300px;
+    height: 400px;
     overflow-y: auto;
   }
 
@@ -608,9 +652,439 @@
     display: block;
     position: fixed;
     bottom: 20px;
-    right: 20px;
-    z-index: 1000;
+    left: 30px;
+    z-index: 1200;
     transition: all 0.3s ease-in-out;
   }
 
+  #infoBubble {
+    z-index: 1000;
+  }
+
+  /* 🌙 DARK MODE - Estilos generales */
+
+  body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+  }
+
+  body.dark-mode main {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+  }
+
+  body.dark-mode #login .vh-100 {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+  }
+
+  /* 🧭 Navegación */
+  body.dark-mode .navbar,
+  body.dark-mode .nav-link,
+  body.dark-mode .navbar-brand {
+    background-color: #1f1f1f;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+  }
+
+  /* 🔘 Botones */
+  body.dark-mode .btn {
+    color: #7066e0 !important;
+    border-color: #444 !important;
+    background-color: #2c2c2c;
+  }
+
+  body.dark-mode #chatbot-minimize {
+    color: inherit !important;
+    border-color: transparent !important;
+    background-color: transparent !important;
+  }
+
+
+  body.dark-mode .loader-container .loader-text {
+    color: #7066e0 !important;
+  }
+
+  /* 🧾 Formularios y selects */
+  body.dark-mode .form-control,
+  body.dark-mode select,
+  body.dark-mode .modal-content select,
+  body.dark-mode .modal-content .accordion-button,
+  body.dark-mode #tableContainer select,
+  body.dark-mode #tableContainer button,
+  body.dark-mode input {
+    background-color: #2c2c2c !important;
+    color: #e0e0e0 !important;
+    border: none;
+  }
+
+  body.dark-mode input::placeholder {
+    color: #aaa !important;
+  }
+
+  /* 🪟 Modales y contenedores */
+  body.dark-mode .modal-content,
+  body.dark-mode #infoBubble,
+  body.dark-mode #tableContainer,
+  body.dark-mode #offcanvasRight,
+  body.dark-mode aside,
+  body.dark-mode card,
+  body.dark-mode #login .vh-100 .card,
+  body.dark-mode aside .btn-custom,
+  body.dark-mode .form-text,
+  body.dark-mode modalConciliacion_app div {
+    background-color: #1f1f1f !important;
+    border-color: #333 !important;
+    color: white;
+  }
+
+  body.dark-mode .bg-primary-subtle {
+    background-color: #007bff !important;
+  }
+
+  body.dark-mode #offcanvasRight,
+  body.dark-mode #login .vh-100 .card {
+    color: #e0e0e0 !important;
+  }
+
+  /* 📊 AG Grid */
+  body.dark-mode .ag-theme-quartz {
+    --ag-background-color: #1e1e1e;
+    --ag-foreground-color: #f0f0f0;
+  }
+
+  /* 🧮 Tablas */
+  body.dark-mode table {
+    //width: 100%;
+    //border-collapse: collapse;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-radius: 8px;
+    //overflow: hidden;
+  }
+
+  body.dark-mode td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #2a2a2a;
+    vertical-align: middle;
+  }
+
+  body.dark-mode tr:nth-child(even) {
+    background-color: #222;
+  }
+
+  body.dark-mode tr:hover {
+    background-color: #2c2c2c;
+    transition: background 0.2s ease;
+  }
+
+  /* 🎯 CHATBOT - Modo oscuro */
+
+  body.dark-mode #chatbot-container .card {
+    background-color: #1f1f1f !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+  }
+
+  body.dark-mode #chatbot-container .card-header {
+    background-color: #2c2c2c !important;
+    border-bottom: 1px solid #444 !important;
+    color: #e0e0e0 !important;
+  }
+
+  body.dark-mode #chatbot-container .card-body {
+    background-color: #1f1f1f !important;
+    color: #e0e0e0 !important;
+  }
+
+  body.dark-mode #chatbot-container .card-footer {
+    background-color: #2c2c2c !important;
+    border-top: 1px solid #444 !important;
+  }
+
+  body.dark-mode #chatbot-container .form-control {
+    background-color: #2c2c2c !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444 !important;
+  }
+
+  body.dark-mode #chatbot-container .form-control::placeholder {
+    color: #aaa !important;
+  }
+
+  body.dark-mode #chatbot-container .btn-send {
+    background-color: #444 !important;
+    color: #fff !important;
+  }
+
+  body.dark-mode #chatbot-container .btn-outline-dark {
+    border-color: #777 !important;
+    color: #ccc !important;
+  }
+
+  body.dark-mode #chatbot-container .btn-outline-dark:hover {
+    background-color: #555 !important;
+    color: #fff !important;
+  }
+
+
+  /* pildoras buscador */
+
+  #searchPills {
+    top: 110%;
+    /* Justo debajo del input */
+    left: 0;
+    margin-top: 2px;
+    z-index: 1050;
+    padding: 2px 4px;
+    background-color: none;
+    border-radius: 6px;
+    //box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #searchPills .pill {
+    font-size: 0.60rem;
+    /* Tamaño pequeño */
+    padding: 0.2rem 0.5rem;
+    /* Estilo pill */
+    border-radius: 50px;
+    border: 1px black;
+    //background-color: white;
+  }
+
+
+  /* REGSTROMODALCUSTOM */
+
+  .pseudo-modal {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+    z-index: 1050;
+    overflow: hidden;
+    /* quitamos el scroll general del modal */
+    pointer-events: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+  }
+
+  .pseudo-modal-dialog {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1140px;
+    /* modal-xl */
+    pointer-events: auto;
+    min-height: auto;
+  }
+
+  /* Contenido principal del modal */
+  .pseudo-modal .modal-content {
+    width: 70%;
+    margin: 0 auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.3rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+    /* Distribución tipo flex para permitir scroll interno solo en el body */
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    /* altura máxima del modal total */
+  }
+
+  /* El body ahora ocupa el espacio restante y permite scroll */
+  .pseudo-modal .modal-body {
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  /* Header y footer sin cambios, ocupan espacio fijo */
+  .pseudo-modal .modal-header,
+  .pseudo-modal .modal-footer {
+    flex-shrink: 0;
+  }
+
+  /* BLUR PARA FORMS */
+
+  .blur {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .d-none {
+    display: none !important;
+  }
+
+  /* Versión pruebas */
+
+  #headerPrincipal {
+    //display: none;
+  }
+
+
+  /* DRIVEVISOR */
+
+  #modalDrive {
+    position: fixed;
+    top: 50px;
+    left: 50px;
+    width: 800px;
+    height: 500px;
+    border: 1px solid #ccc;
+    background: white;
+    z-index: 1030;
+    box-shadow: 0 0 10px #00000055;
+    display: none;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+
+  }
+
+  #modalHeader {
+    background: #007bff;
+    color: white;
+    padding: 8px;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+
+  #modalHeader button {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+
+  #modalContent {
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  #modalContent iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  #asideMain .modal-content {
+    position: relative;
+    top: 30px;
+    z-index: 1040;
+    height: 90%;
+  }
+
+  .collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+  }
+
+  .collapsible.show {
+    max-height: 500px;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .img-slide-up {
+    animation: slideUp 1s ease-out;
+  }
+
+  /* ONBOARDING ANIMATION */
+
+  .card-animated {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  .card-animated:nth-child(1) {
+    animation-delay: 0.2s;
+  }
+
+  .card-animated:nth-child(2) {
+    animation-delay: 0.4s;
+  }
+
+  .card-animated:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+
+  .card-animated:nth-child(4) {
+    animation-delay: 0.8s;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+  /* ANIMACIÓN BIENVENIDA */
+
+  .loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .loader-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    10% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    90% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
 </style>

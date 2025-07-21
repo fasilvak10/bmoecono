@@ -1,0 +1,99 @@
+  <script>
+    function crearArchivos(element, carpetaEmpresa) {
+      console.log("Llegó archivo");
+
+      const tramite = document.getElementById('tramite').innerText;
+
+      const archivo = element.innerHTML.replace(/^[^\p{L}\p{N}]*/u, '').trim();
+      const form = document.getElementById('crearUsuario');
+      const id = form.expediente.value;
+      form.classList.add('blur');
+
+      if(archivo === 'La Empresa no cuenta con Carpeta'){
+          Swal.fire({
+          text: 'La carpeta no cuenta con Carpeta. Para crearlo, debes seleccionar un archivo.',
+        });
+        form.classList.remove('blur');
+        return true  
+      }
+
+      if(archivo === 'Abrir Carpeta de la Empresa') {
+        window.open(carpetaEmpresa, '_blank');
+        form.classList.remove('blur');
+        return true;
+      }
+
+      const empresa = {
+        id,
+        tipoArchivo: archivo,
+        tipoTramite: selectedTable,
+        carpeta: carpetaEmpresa,
+        tramite
+      };
+
+      console.log(empresa);
+
+     if (carpetaEmpresa === '') {
+  Swal.fire({
+    title: '¿Desea continuar?',
+    text: 'La empresa no cuenta con una carpeta. Se procederá a crearla junto con el archivo.',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, continuar',
+    cancelButtonText: 'No, cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        text: 'Creando carpeta y archivo. Por favor aguarde...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      google.script.run
+        .withSuccessHandler(mostrarConfirmacion)
+        .withFailureHandler(manejarError)
+        .crearInforme(empresa);
+    } else {
+      form.classList.remove('blur');
+      return; // ⛔ Cancela la acción
+    }
+  });
+
+  return; // Importante: detener ejecución aquí para esperar confirmación
+}
+    }
+
+  function mostrarConfirmacion(result) {
+    console.log(result)
+    Swal.fire({
+      text: 'Se ha creado la petición con éxito. Abrí nuevamente el formulario',
+      footer: `<a href="${result}" target="_blank">Acceder al Archivo</a>`
+    });
+
+    GetData();
+    document.getElementById('crearUsuario').classList.remove('blur');
+    document.getElementById('offcanvasRight').classList.remove('show')
+    //document.getElementById('offcanvasRight').classList.remove('show');
+    //loadingCharge(botonLoading, botonOriginal);
+    //launchConfetti();
+
+    // Apagar loading (si lo usás)
+    // loadingOnOff();
+  }
+
+  function manejarError(error) {
+    console.error("Error al crear el archivo:", error);
+    form.classList.remove('blur');
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al crear el archivo',
+      text: 'Ocurrió un problema al intentar generar el archivo. Por favor, intentá nuevamente o contactá al administrador.',
+      footer: `<small>Detalles: ${error.message || error}</small>`
+    });
+
+    // Apagar loading si está activado
+    // loadingOnOff();
+  }
+
+</script>

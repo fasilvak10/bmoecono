@@ -1,0 +1,32 @@
+<!-- Button calculadora modal -->
+<button type="button" class="btn-custom  text-start mt-1" data-bs-toggle="modal" data-bs-target="#modalCalculadora"><i class="bi bi-calculator"></i> Calculadora días</button>
+
+<!-- Modal Calculadora Dias Hábiles-->
+<div class="modal fade" id="modalCalculadora" data-bs-backdrop="false" tabindex="-1" aria-labelledby="modalCalculadora" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Calculadora Días Hábiles</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <form id="calcForm">
+          <label for="fechaInicialCalculadora">Fecha de inicio:</label><br>
+          <input type="date" class="form-control" id="fechaInicialCalculadora" name="fechaInicialCalculadora"><br>
+          <label for="agregarDias">Días a agregar:</label><br>
+          <input type="number" class="form-control" id="agregarDias" name="agregarDias"><br><br>
+        </form>
+
+        <label for="resultado" id="result" class="form-check-label"></label>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" value="Calcular" onclick="calculate(document.getElementById('fechaInicialCalculadora').value, document.getElementById('agregarDias').value, document.getElementById('result'))">Calcular</button>
+      </div>
+    </div>
+  </div>
+</div>

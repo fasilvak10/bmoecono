@@ -1,4 +1,4 @@
-<section id="tableContainer" class="border rounded-4 mb-5 shadow-sm bg-body-tertiary">
+  <section id="tableContainer" class="border rounded-4 mb-5 shadow-sm bg-body-tertiary">
   <div class="p-4 rounded-top-4 shadow-sm" style="color: white" id="headerTableS">
     <!-- background-color: #5D3FD3 -->
 
@@ -54,13 +54,18 @@
       </div>
 
       <div class="form-check form-switch form-check-reverse me-3 ">
-        <input class="form-check-input" type="checkbox" id="filtro-afip">
+        <input class="form-check-input" type="checkbox" id="filtro-afip" onchange="aplicarFiltrosDesdeSelectores()">
         <label class="form-check-label" for="filtro-afip">Pendiente envío 1266</label>
       </div>
 
       <div class="form-check form-switch form-check-reverse me-3">
         <input class="form-check-input" type="checkbox" id="filtro-presentacionPendiente" onchange="aplicarFiltrosDesdeSelectores()">
         <label class="form-check-label" for="filtro-presentacionPendiente">Presentación Pendiente</label>
+      </div>
+
+      <div class="form-check form-switch form-check-reverse me-3" hidden>
+        <input class="form-check-input" type="checkbox" id="filtro-misTramites" onchange="aplicarFiltrosDesdeSelectores()">
+        <label class="form-check-label" for="filtro-misTramites">Mis Trámites</label>
       </div>
 
     </div>
@@ -76,6 +81,10 @@
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
+  </div>
+
+  <div id="loader_welcome" class="loader-container" style="display: none;">
+    <div class="loader-text" id="loaderText" ></div>
   </div>
 
 

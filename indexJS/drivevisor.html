@@ -1,0 +1,103 @@
+<script>
+  // Escuchamos los clicks en el ul, usando delegación de eventos
+  document.getElementById('dropdownArchivos').addEventListener('click', function (event) {
+    if (event.target.tagName === 'A') {
+      event.preventDefault(); // si no querés que se abra el link
+      const href = event.target.getAttribute('href');
+
+      abrirModal(href);
+    }
+  });
+
+  let isMinimized = false;
+  let isMaximized = false;
+  let isDraggingOrResizing = false;
+
+  $(function () {
+    $("#modalDrive").draggable({
+      handle: "#modalHeader",
+      start: function () {
+        isDraggingOrResizing = true;
+        $("#modalContent iframe").css("pointer-events", "none");
+      },
+      stop: function () {
+        isDraggingOrResizing = false;
+        $("#modalContent iframe").css("pointer-events", "auto");
+      }
+    }).resizable({
+      minWidth: 300,
+      minHeight: 200,
+      start: function () {
+        isDraggingOrResizing = true;
+        $("#modalContent iframe").css("pointer-events", "none");
+      },
+      stop: function () {
+        isDraggingOrResizing = false;
+        $("#modalContent iframe").css("pointer-events", "auto");
+      }
+    });
+
+    // Botón cerrar
+    $("#closeBtn").click(function () {
+      $("#modalDrive").hide();
+    });
+
+    // Botón minimizar
+    $("#minBtn").click(function () {
+      if (!isMinimized) {
+        $("#modalContent").hide();
+        $("#modalDrive").css({ 
+          height: 'auto',
+          width: '80px',
+          display: 'block',
+          position: 'fixed',
+          bottom: '20px',
+          right: '30px',
+          zIndex: 1200,
+          transition: 'all 0.3s ease-in-out' 
+          
+          });
+        isMinimized = true;
+      } else {
+        $("#modalContent").show();
+        $("#modalDrive").css({ height: '500px' });
+        isMinimized = false;
+      }
+    });
+
+    // Botón pantalla completa
+    $("#maxBtn").click(function () {
+      if (!isMaximized) {
+        $("#modalDrive").css({
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          position: 'fixed',
+        });
+        isMaximized = true;
+      } else {
+        $("#modalDrive").css({
+          top: '50px',
+          left: '50px',
+          width: '800px',
+          height: '500px'
+        });
+        isMaximized = false;
+      }
+    });
+  });
+
+  // Cargar iframe solo al abrir
+  function abrirModal(fileUrl) {
+    document.getElementById('modalDrive').hidden = false;
+
+    if ($("#modalContent iframe").length === 0) {
+      $("#modalContent").html(`<iframe src="${fileUrl}" allow="autoplay"></iframe>`);
+    } else {
+      $("#modalContent iframe").remove;
+      $("#modalContent").html(`<iframe src="${fileUrl}" allow="autoplay"></iframe>`);
+    }
+    $("#modalDrive").show();
+  }
+</script>

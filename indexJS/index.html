@@ -1,24 +1,60 @@
 <!-- Función ECONOCIMIENTO Header -->
 <script>
-  $(document).ready(function() {
-    const words = ['software', 'servicios', 'audiovisual', 'biotecnología', 'nanotecnología', 'aeroespacial', 'satelital', 'industria', 'ingenierías', 'creación de empleo', 'exportaciones', 'talento', ' '];
-    const typed = new Typed('#typing', {
-      strings: words,
-      typeSpeed: 50,
-      backSpeed: 50,
-      backDelay: 10000,
-      loop: true,
-      cursorColor: '#0057ff',
-    });
+  function iniciarTypedUnaVez() {
+    const words = ['software', 'servicios', 'audiovisual', 'biotecnología', 'nanotecnología', 'aeroespacial', 'satelital', 'industria', 'ingenierías', 'creación de empleo', 'exportaciones', 'talento'];
+    let typed = null;
 
-    let isPaused = false;
+    // Función para crear el efecto Typed con una palabra
+    function escribirPalabra(palabra) {
+      if (typed) {
+        typed.destroy(); // elimina la instancia anterior
+      }
 
-    $('h1[role="button"]').on('click', function() {
-      isPaused ? typed.start() : typed.stop();
-      $(this).attr('aria-pressed', isPaused);
-      isPaused = !isPaused;
+      typed = new Typed('#typing', {
+        strings: [palabra],
+        typeSpeed: 50,
+        showCursor: false,
+        loop: false,
+      });
+    }
+
+    // Elegir y escribir la primera palabra
+    const palabraInicial = words[Math.floor(Math.random() * words.length)];
+    escribirPalabra(palabraInicial);
+
+    // Al hacer click se elige otra palabra distinta y se vuelve a escribir con efecto
+    document.getElementById('typing').addEventListener('click', function () {
+      let nuevaPalabra;
+      do {
+        nuevaPalabra = words[Math.floor(Math.random() * words.length)];
+      } while (nuevaPalabra === typed.strings[0]); // evitar repetir la misma palabra
+
+      escribirPalabra(nuevaPalabra);
     });
-  });
+  }
+
+  function reglasOnboarding() {
+    const reglas = `1. Prepárate para trabajar con un sistema accesible y divertido.
+    2. Elegí tu acompañante para ayudarte en tus tareas.
+    3. Elegí con cautela, porque te va a guiar por un buen tiempo… <strong>jsjsjs</strong>.`;
+
+    new Typed('#typingOB', {
+      strings: [reglas],
+      typeSpeed: 35,
+      showCursor: false,
+      loop: false,
+      smartBackspace: true
+    });
+  }
+
+  function animarCards() {
+    const cardCols = document.querySelectorAll('.col.d-flex'); // o más específico si querés
+    cardCols.forEach((col) => {
+      col.classList.add('card-animated');
+    });
+  }
+
+
 
   document.addEventListener('DOMContentLoaded', function () {
     const navbar = document.querySelector('.navbar');
@@ -40,9 +76,117 @@
 
   function abrirEnlace(element) {
     var enlace = element.getAttribute('href');
-    window.open(enlace, '_blank');
+    
+    //window.open(enlace, '_blank');
+    //obtenerArchivos(enlace)
+
   }
 
+  function obtenerArchivos(urlCarpeta) {
+    const dropdown = document.getElementById("dropdownArchivos");
+    urlCarpeta !== '' ?  dropdown.innerHTML = " Cargando..." :  dropdown.innerHTML = ' La Empresa no cuenta con archivos';
+    google.script.run
+      .withSuccessHandler(function(archivos) {
+        dropdown.classList.add('blur')
+        dropdown.innerHTML = ""; // Limpiar previo
+
+        archivos.forEach(archivo => {
+          const nombreCorto = truncarNombre(archivo.nombre);
+          const ext = detectarTipo(archivo.tipo);
+          const esInforme = archivo.nombre.toLowerCase().includes("informe");
+
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          
+          link.className = "dropdown-item";
+          
+          if (esInforme) {
+            link.classList.add("text-primary", "fw-bold"); // 💡 resaltado
+          }
+
+          if (archivo.tipo.includes("spreadsheet")) {
+            link.classList.add("text-success"); // 💚 Verde para archivos tipo Sheet
+          }
+
+          link.href = archivo.url;
+          link.target = "_blank";
+          link.textContent = `${nombreCorto} ${ext}`;
+          link.setAttribute("data-bs-toggle", "tooltip");
+          link.setAttribute("data-bs-placement", "right");
+          link.setAttribute("title", archivo.nombre); // Tooltip visible al apoyar
+
+          item.appendChild(link);
+          dropdown.appendChild(item);
+        });
+
+        // Inicializar tooltips de Bootstrap
+        const tooltipTriggerList = [].slice.call(dropdown.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+          new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        dropdown.classList.remove('blur')
+      })
+      .obtenerArchivosDesdeUrl(urlCarpeta);
+  }
+
+  function truncarNombre(nombre) {
+    const maxPalabras = 6;
+    const palabras = nombre.split(" ");
+    if (palabras.length <= maxPalabras) return nombre;
+    return palabras.slice(0, maxPalabras).join(" ") + "…";
+  }
+
+  function detectarTipo(mime) {
+    if (mime.includes("spreadsheet")) return "[.sheet]";
+    if (mime.includes("document")) return "[.doc]";
+    if (mime.includes("presentation")) return "[.slide]";
+    if (mime.includes("pdf")) return "[.pdf]";
+    if (mime.includes("folder")) return "[.folder]";
+    return "[.file]";
+  }
+
+  function mostrarModelos(tramite, carpetaEmpresa) {
+    const dropdown = document.getElementById("dropdownModelos");
+    dropdown.innerHTML = ""; // Limpiar
+
+    // 👉 Agregar opción "Carpeta Empresa"
+    const liCarpeta = document.createElement("li");
+    const aCarpeta = document.createElement("a");
+    aCarpeta.className = "dropdown-item text-primary fw-bold"; // le damos un estilo distintivo
+    aCarpeta.href = "#";
+    carpetaEmpresa !== '' ? aCarpeta.textContent = "📁 Abrir Carpeta de la Empresa" : aCarpeta.textContent = "📁 La Empresa no cuenta con Carpeta" ;
+    aCarpeta.dataset.tipo = "carpeta-empresa"; // para distinguirlo luego
+    aCarpeta.dataset.url = carpetaEmpresa;
+
+    aCarpeta.onclick = function(event) {
+      event.preventDefault();
+      crearArchivos(this, carpetaEmpresa); // lo vas a manejar por `dataset.tipo`
+    };
+
+    liCarpeta.appendChild(aCarpeta);
+    dropdown.appendChild(liCarpeta);
+
+    // Agregar modelos filtrados
+    listaModelosDisponibles
+      .filter(i => i[3] == tramite || i[3] === "")
+      .forEach(([nombre]) => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.className = "dropdown-item";
+        a.href = "#";
+        a.textContent ="📝 "+ nombre;
+
+        a.onclick = function(event) {
+          event.preventDefault();
+          crearArchivos(this, carpetaEmpresa);
+        };
+
+        li.appendChild(a);
+        dropdown.appendChild(li);
+      });
+
+  }
 
   // Agregar animación al hover
   const iconLink = document.querySelector('.icon-link-hover');
@@ -54,9 +198,20 @@
   });
   
 
+  var chatHistoryToggle = [];
+
   function toggleInfo(event) {
-    if(event) { 
-      event.preventDefault()
+    if (event) {
+      event.preventDefault();
+    }
+
+    let resultados = "";
+    if (rowToTable) {
+      resultados = Object.values(rowToTable).filter(
+        fila =>
+          fila["Analista Asignado (evaluador)"] === dataUser.name &&
+          fila["Sub Estado"]?.toLowerCase() === "abierta"
+      );
     }
 
     const spinner = document.getElementById('spinnerMainCharacter');
@@ -66,56 +221,83 @@
     const geminiRest = document.getElementById('geminiRest');
 
     google.script.run.withSuccessHandler((respuesta) => {
-        console.log(respuesta);
-        spinner.hidden = true;
+      spinner.hidden = true;
+      infoBubble.hidden = false;
+      geminiRest.innerHTML = '';
 
-        // Limpiar el contenido anterior y aplicar el efecto de tipeo
-        infoBubble.hidden = false;
-        geminiRest.innerHTML = ''; 
+      const mensajeFormateado = formatearRespuestaIA(respuesta);
 
-        new Typed('#geminiRest', {
-          strings: [respuesta],
-          typeSpeed: 50,         // Velocidad de tipeo
-          backSpeed: 25,         // Velocidad de retroceso (si aplica)
-          showCursor: false,     // Ocultar el cursor de tipeo
-          loop: false,           // Evitar repetir el texto
-          onComplete: () => {
-            // Mostrar el contenedor una vez terminado el tipeo
-          
+      // 💾 Guardar en el historial
+      chatHistoryToggle.push({
+        timestamp: new Date().toISOString(),
+        usuario: dataUser.name,
+        consulta: resultados,  // Podés también reducir los datos si querés
+        respuesta: mensajeFormateado
+      });
+
+      //console.log(chatHistoryToggle)
+
+      new Typed('#geminiRest', {
+        strings: [mensajeFormateado],
+        typeSpeed: 20,
+        backSpeed: 25,
+        showCursor: false,
+        loop: false,
+        onComplete: () => {
+          // Podés hacer algo al final del tipeo si querés
         }
       });
 
-    }).geminiAPI();
+    }).geminiAPI(resultados, dataUser, chatHistoryToggle);
   }
 
 
   function launchConfetti() {
-    const duration = 3 * 1000; // Duración en milisegundos (3 segundos)
+    const duration = 3 * 1000;
     const end = Date.now() + duration;
 
-    // Función que lanza confeti repetidamente
+    // Crear canvas que cubre toda la pantalla
+    const myCanvas = document.createElement('canvas');
+    myCanvas.style.position = 'fixed';
+    myCanvas.style.top = 0;
+    myCanvas.style.left = 0;
+    myCanvas.style.width = '100%';
+    myCanvas.style.height = '100%';
+    myCanvas.style.pointerEvents = 'none';
+    myCanvas.style.zIndex = 9999;
+
+    document.body.appendChild(myCanvas);
+
+    const myConfetti = confetti.create(myCanvas, {
+      resize: true,
+      useWorker: true
+    });
+
     (function frame() {
-      // Lanza confeti en una ráfaga
-      confetti({
-        particleCount: 5,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 }
-      });
-      confetti({
-        particleCount: 5,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 }
+      myConfetti({
+        particleCount: 6,
+        angle: 90,
+        spread: 360,
+        startVelocity: 5,
+        gravity: 0.6,
+        ticks: 400,
+        origin: {
+          x: Math.random(), // aleatorio en todo el ancho
+          y: 0
+        }
       });
 
-      // Continuar lanzando confeti mientras dure el tiempo
       if (Date.now() < end) {
         requestAnimationFrame(frame);
+      } else {
+        setTimeout(() => {
+          document.body.removeChild(myCanvas);
+        }, 6000); // deja que termine de desvanecerse
       }
-    })
-  ();
-}
+    })();
+  }
+
+
 
   // Función para animar el contador
   function animateCounter(element, start, end, duration) {
@@ -189,7 +371,84 @@
     aside.classList.toggle('active');
   });
 
+  /* DARKMODE */
 
+  const toggleBtn = document.getElementById("modoOscuroBtn");
+
+  // Verificar en el localStorage al cargar la página
+  if (localStorage.getItem("modoOscuro") === "true") {
+    document.body.classList.add("dark-mode");
+    toggleBtn.innerHTML = `<i class="bi bi-brightness-high"></i>`;
+  }
+
+  toggleBtn.addEventListener("click", function () {
+    const modoOscuroActivado = document.body.classList.toggle("dark-mode");
+
+    // Guardar en localStorage
+    localStorage.setItem("modoOscuro", modoOscuroActivado);
+
+    // Cambiar ícono según el estado
+    if (modoOscuroActivado) {
+      toggleBtn.innerHTML = `<i class="bi bi-brightness-high"></i>`;
+    } else {
+      toggleBtn.innerHTML = `<i class="bi bi-moon"></i>`;
+    }
+  });
+
+  /* TEXTAREA AUTOAJUSTE */
+
+  const textarea = document.getElementById('user-input');
+
+  textarea.addEventListener('input', () => {
+    textarea.style.height = 'auto'; // Resetea la altura
+    textarea.style.height = textarea.scrollHeight + 'px'; // Ajusta al contenido
+  });
+
+  // Opcional: ajustar altura inicial
+  window.addEventListener('DOMContentLoaded', () => {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  });
+
+  /* VERSION ACTUALIZADA */
+
+  //let session = "abc123"; // O traelo de localStorage, backend, etc.
+
+  function verificarSesion() {
+    GetData(true);
+    const aviso = document.getElementById("avisoSession");
+
+    if (typeof session === 'undefined' || !session) {
+      console.log("⚠️ session no está definido o es falso. No se verifica sesión.");
+      return;
+    }
+
+    console.log("✅ Verificando sesión con session =", session);
+
+    google.script.run
+      .withSuccessHandler(function(resultadoServidor) {
+        if (resultadoServidor !== session) {
+          if (aviso.hidden) {
+            alert("Tu sesión fue cerrada o reemplazada.");
+            window.location.href = "https://script.google.com/macros/s/AKfycbwrlNDKabQ08HJqGkfJpmLeOyiY-7pGKlMELAb8TP431Xt4bqxPTiY03pIGJAoMpJBi4Q/exec";
+          }
+          aviso.hidden = false;
+        }
+      })
+      .withFailureHandler(function(error) {
+        console.error("❌ Error al verificar la sesión:", error.message);
+      })
+      .verificarSesionEnServidor(session);
+  }
+
+
+  // Ejecutar al inicio y luego cada 1 minuto (o cada 15 minutos en prod)
+  //verificarSesion();
+  setInterval(verificarSesion, 120000); // Cambiá a 900000 para 15 minutos
+  
+
+  // También la podés ejecutar inmediatamente al cargar
+  //window.onload = verificarSesion;
 
 
 </script>

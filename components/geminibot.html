@@ -1,27 +1,34 @@
-<button id="chatbot-minimize" class="badge btn btn-warning-subtle rounded-circle float" onclick="toggleChatbot()" aria-label="Abrir chatbot" >
-  <img class="" width="50" height="50" src="https://img.icons8.com/stickers/50/lumpy-space-princess.png" alt="lumpy-space-princess"/>
-</button>
+<button id="chatbot-minimize" class="badge btn btn-warning-subtle float" aria-label="Abrir chatbot">
+    <img width="80" height="80" src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/bf9088230580623.68791f2f78cfe.png" alt="alec" />
+  </button>
 
-<div id="chatbot-container" style="font-size: 0.75em">
+
+<div id="chatbot-container">
   <div class="card">
-    <div class="card-header bg-dark text-white">
-      Chatbot
-      <button type="button" class="btn-close btn-close-white float-end" aria-label="Cerrar chatbot" onclick="toggleChatbot()"></button>
-      <button type="button" class="btn btn-sm btn-light float-end me-2 btn-minimize" onclick="minimizeChatbot()">
-                    <i class="fa-thin fa-minus"></i>
-                </button>
+    <div class="card-header text-bg-primary">
+      Asistente de la LEC
+      <button type="button" class="btn-close btn-close-white float-end" aria-label="Cerrar chatbot"></button>
+      <button type="button" class="btn btn-sm btn-light float-end me-2 btn-minimize">
+          <i class="fa-thin fa-minus"></i>
+        </button>
     </div>
-    <div id="chatbot-body" class="card-body">
-      <!-- Los mensajes del chat aparecerán aquí -->
-      <div id="typing-indicator" class="d-none">
-        <small class="text-muted"><em>Chatbot está escribiendo...</em></small>
-      </div>
+    <div id="chatbot-body" class="card-body text-bg-light" style="height: 300px; overflow-y: auto; font-size: 0.9em">
+      <!-- Mensajes del chat -->
     </div>
-    <div class="card-footer">
-      <div class="input-group input-group input-group-sm">
-        <input type="text" id="user-input" class="form-control" placeholder="Escribe un mensaje..." style="font-size: 0.9em">
-        <button class="btn btn-dark btn-send boder border-0" type="button" style="font-size: 0.9em">Enviar</button>
+    <!-- Indicador de escritura arriba del input -->
+    <div class="text ms-2" style="font-size: 0.9em; min-height: 1em;">
+      <small id="typing-indicator" class="text-muted d-none"><em>Alec está analizando...</em></small>
+    </div>
+    <div class="card-footer p-2 pt-1">
+      <div class="input-group input-group-sm mt-1">
+        <textarea id="user-input" class="form-control" placeholder="Escribe un mensaje..." style="resize: none; overflow: hidden;"></textarea>
+        <button class="btn btn-dark btn-send border-0" type="button" style="font-size: 0.9em">Enviar</button>
+        <button id="stop-typing" class="btn btn-outline-dark btn-sm ms-2" type="button" style="font-size: 0.9em; display: none;"><i class="bi bi-stop-btn-fill"></i></button>
+
       </div>
     </div>
   </div>
+  <button id="scroll-to-bottom" class="btn btn-sm btn-secondary d-none" style="position: absolute; bottom: 75px; right: 20px; z-index: 999;">
+    <i class="bi bi-arrow-down-short"></i> 
+  </button>
 </div>

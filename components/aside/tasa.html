@@ -1,0 +1,137 @@
+<!-- Button conciliacion modal -->
+<button type="button" class="btn-custom  text-start" data-bs-toggle="modal" data-bs-target="#modalConciliacion"><i class="bi bi-coin"></i> Conciliar Tasa</button>
+
+<!-- Modal de Conciliación -->
+<div class="modal fade" id="modalConciliacion" tabindex="-1"  data-bs-backdrop="false" aria-labelledby="modalConciliacionLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConciliacionLabel">
+                    .Econocimiento/<span id="modalConciliacion_typing"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body" style="max-height: 70vh; overflow: hidden; display: flex; flex-direction: column;">
+                <main id="modalConciliacion_app" class="container"
+                    style="font-size:0.90em; flex: 1 1 auto; overflow: hidden; display: flex; flex-direction: column;">
+
+                    <div style="flex-shrink: 0;">
+
+                        <!-- MÉTRICAS -->
+                        <div class="mt-2 mb-3" id="modalConciliacion_metricas">
+                            <div class="pt-2">
+                                <div id="modalConciliacion_actualizacion" class="form-text"></div>
+                            </div>
+
+                            <div class="d-flex justify-content-start mt-2">
+                                <div class="form-text">Valores Acumulados | </div>
+                                <div id="modalConciliacion_cantRegistros" class="form-text ms-2"></div>
+                                <div id="modalConciliacion_beneficiosOtorgados" class="form-text ms-2"></div>
+                                <div id="modalConciliacion_tasaTotal" class="form-text ms-2"></div>
+                                <div id="modalConciliacion_pagosTotal" class="form-text ms-2"></div>
+                                <div id="modalConciliacion_saldoTotal" class="form-text ms-2"></div>
+                            </div>
+                            <div class="mt-2">
+                                <div id="modalConciliacion_periodo" class="form-text"></div>
+                            </div>
+                        </div>
+
+                        <!-- FILTROS -->
+                        <form class="row g-2 align-items-center mb-4" style="font-size: 0.85em;">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="modalConciliacion_buscarRegistro" placeholder="Buscar...">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <select class="form-select" id="modalConciliacion_filtro-nombre"> </select>
+
+
+                            </div>
+
+                            <div class="col-md-2">
+                                <select class="form-select" id="modalConciliacion_filtro-empresa"> </select>
+
+
+                            </div>
+
+                            <div class="col-md-2">
+                                <select class="form-select" id="modalConciliacion_filtro-estado"> </select>
+
+
+                            </div>
+
+                            <div class="col-md-2">
+                                <select class="form-select" id="modalConciliacion_filtro-estado-2"> </select>
+
+
+                            </div>
+                        </form>
+
+                        <!-- BTONES -->
+                        <div class="d-flex justify-content-end mb-3">
+                            <button class="btn btn-outline-primary me-3" id="modalConciliacion_descargar" onclick="descargarArchivo()">
+              <i class="bi bi-download"></i> Descargar
+            </button>
+                            <button class="btn btn-outline-secondary" id="modalConciliacion_carpeta" onclick="abrirCarpetaConciliacion()">
+              <i class="bi bi-folder-fill"></i> Carpeta
+            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Contenedor scrollable con la tabla -->
+                    <div style="overflow-y: auto; flex-grow: 1;">
+                        <table class="table table-hover mt-2">
+                            <thead class="bg-text-dark" style="position: sticky; top: 0;  z-index: 1;">
+                                <tr>
+                                    <th class="text-center">Periodo</th>
+                                    <th class="text-center">Empresa</th>
+                                    <th class="text-center">Cuit</th>
+                                    <th class="text-center">Tipo Beneficio</th>
+                                    <th class="text-center">Beneficios ($)</th>
+                                    <th class="text-center">Calculo 2% ($)</th>
+                                    <th class="text-center">Pagos Ingresados ($)</th>
+                                    <th class="text-center">Saldo ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalConciliacion_tableBody-usuarios"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Loading que ocupa todo el modal -->
+                    <div id="modalConciliacion_loading">
+                        <div class="text-center">
+                            <h1 style="color:white; font-weight:bold">.Econocimiento/</h1>
+                            <div class="spinner-border text-light" style="width: 5rem; height: 5rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="text-light mt-3"><strong>Cargando...</strong></div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- TEMPLEATE PARA QUE SE ADICIONEN LOS DATOS DE MANERA AUTOMÁTICA -->
+                <template id="modalConciliacion_rowTemplate">
+                    <tr>
+                        <td class="template-periodoColConciliacion text-center"></td>
+                        <td class="template-empresaConciliacion text-center"></td>
+                        <td class="template-cuitConciliacion text-center"></td>
+                        <td class="template-tipoBeneficioConciliacion text-center"></td>
+                        <td class="template-beneficiosConciliacion text-center"></td>
+                        <td class="template-tasaConciliacion text-center"></td>
+                        <td class="template-pagosConciliacion text-center"></td>
+                        <td class="template-saldoConciliacion text-center"></td>
+                    </tr>
+                </template>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

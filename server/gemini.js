@@ -1,105 +1,98 @@
-/* Gemini Flash 1.5 */
-const API_KEY = 'AIzaSyA3VkXui9bE-i-NDsrhdYdNn0vP2J709G0';
+//const API_KEY = PropertiesService.getScriptProperties().getProperty('API_KEY');
 
-/* Gemini Flash 1.5 */
-const GEMINI_API_KEY = 'AIzaSyCCHdmdbRu4OQ3ZA2AUK8k5dIwcNttrKrI';
+/* Gemini Flash 2.0 */
+const GEMINI_API_KEY = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+
 
 //const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`
 const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`
 
 //generateChat e chat history para mantener la conversación
-//system_instruction cua es el rol del caracter según selección
+//system_instruct ion cua es el rol del caracter según selección
 
 //hasta 20 gigas, los archivos se borran cada 2 dias 
 //gemini.upload_file(path, display_name)
 
-const datos = `Analista Asignado (evaluador),En Revisión,Informe Técnico Firmado,No corresponde,Providencia Notificada,Subsanación
-Brenda,,1,7,58,
-Cintia,1,,1,21,
-Claudia,2,1,6,71,
-Constanza,,,1,4,
-Elias,1,3,3,53,1
-Facundo O,3,2,7,83,
-Florencia,,,9,73,
-Franca,,,4,47,
-Franco,,,1,12,
-Jesica,,,1,5,
-Julieta F,,,,5,
-Luana,,,,4,
-MarianoF,1,,8,68,1
-Melanie,,,1,17,
-Romina,,,3,11,
-Suma total,8,7,52,532,2`;
-
 function geminiAPIChatbot(pregunta, historial) {
 
     const urls = [
+        'https://docs.google.com/document/d/1Ckd_roZkteC0iFs5O92dzBbMB25MJJ9uvtAPcZQKSWw/edit',
         'https://www.argentina.gob.ar/normativa/nacional/ley-27506-324101/actualizacion',
         'https://www.argentina.gob.ar/normativa/nacional/resoluci%C3%B3n-268-2022-376758/actualizacion',
-        'https://lookerstudio.google.com/reporting/b60752fd-4a99-48a3-9b6a-f32d20292b5c'
     ];
 
-    // Inicializar un array para almacenar los contenidos de las URLs en Base64
     const inlineDataArray = [];
 
-    // Iterar sobre cada URL, obtener su contenido y codificarlo en Base64
     urls.forEach((url) => {
-        const response = UrlFetchApp.fetch(url);
-        const fileContent = response.getContentText().replace(/<[^>]+>/g, ''); // Elimina etiquetas HTML
-        const base64Content = Utilities.base64Encode(fileContent);
+        try {
+            if (esGoogleDoc(url)) {
+                const docId = extraerDocId(url);
+                const texto = leerContenidoDeGoogleDoc(docId);
+                const base64Content = Utilities.base64Encode(texto);
 
-        inlineDataArray.push({
-            "mimeType": "text/html",
-            "data": base64Content
-        });
+                inlineDataArray.push({
+                    mimeType: 'text/plain',
+                    data: base64Content
+                });
+            } else {
+                const response = UrlFetchApp.fetch(url);
+                const headers = response.getHeaders();
+                const contentType = headers['Content-Type'] || headers['content-type'] || 'text/plain';
+                let fileContent = response.getContentText();
+
+                if (contentType.includes('text')) {
+                    fileContent = fileContent.replace(/<[^>]+>/g, ''); // Quitar etiquetas HTML si hay
+                }
+
+                const base64Content = Utilities.base64Encode(fileContent);
+
+                inlineDataArray.push({
+                    mimeType: 'text/plain',
+                    data: base64Content
+                });
+            }
+        } catch (e) {
+            Logger.log(`Error procesando ${url}: ${e.message}`);
+        }
     });
 
     const mensajes = historial.map(item => ({
         role: item.sender === "Usuario" ? "USER" : "ASSISTANT",
-        parts: [
-            { text: item.message },
-            ...(item.sender === "ASSISTANT"
-                ? inlineDataArray.map(data => ({
-                    "inlineData": data
-                }))
-                : [])
-        ]
+        parts: [{ text: item.message }]
     }));
 
-    // Agregar el mensaje actual del usuario y el contenido codificado al final del historial
     mensajes.push({
-        role: "USER",
+        role: "ASSISTANT",
         parts: [
-            { text: pregunta },
-            ...inlineDataArray.map(data => ({
-                inlineData: data
-            }))
+            { text: "Adjunto documentación relevante: Ley 27.506, Resolución 268/2022 y otros documentos útiles." },
+            ...inlineDataArray.map(data => ({ inlineData: data }))
         ]
     });
 
-    // Crear el payload
+    mensajes.push({
+        role: "USER",
+        parts: [{ text: pregunta }]
+    });
+
     const payload = {
-        "contents": mensajes,
-        "systemInstruction": {
-            "parts": [
-                { "text": "Responde como un especialista en temas relaciones a Economía del Conocimiento. Responde en no más de 3000 caracteres. Utiliza emojis, pero pocos, sin abrumar" },
-            ]
+        contents: mensajes,
+        systemInstruction: {
+            parts: [{ text: "Responde como si fueras un especialista argentino en derecho y tecnología. Se breve y conciso, y solo extiendete si es muy necesario" }]
         }
     };
 
-    // Configurar los parámetros de la solicitud
     const params = {
-        'contentType': 'application/json',
-        'method': 'post',
-        'payload': JSON.stringify(payload)
+        contentType: 'application/json',
+        method: 'post',
+        payload: JSON.stringify(payload),
+        muteHttpExceptions: true
     };
 
-    // Realizar la solicitud
     const apiResponse = UrlFetchApp.fetch(geminiUrl, params);
     const data = JSON.parse(apiResponse.getContentText());
+    Logger.log(JSON.stringify(data, null, 2)); // Para debugging
 
-    // Retornar la respuesta procesada
-    return data.candidates[0].content.parts[0].text;
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text || "No se recibió respuesta válida del modelo.";
 }
 
 function getRespuestaGemini(text, chatHistory) {
@@ -120,7 +113,7 @@ function getRespuestaGemini(text, chatHistory) {
         return obj;
     });
 
-    const instruction = formattedData[2].rol_system_instrution;
+    const instruction = formattedData[1].rol_system_instrution;
     console.log(instruction);
 
     // Pasar el historial del chat al backend
@@ -128,37 +121,100 @@ function getRespuestaGemini(text, chatHistory) {
     return respuestaGemini;
 }
 
-function geminiAPI() {
+function systemInstructionCharacter(character){
+    const ss = SpreadsheetApp.openById('14d0kCst55iytMAfC1cMQPRjAOL7n3Hwbc_nfaFAP2qA');
+    const characters = ss.getSheetByName('characters');
+    const data = characters.getDataRange().getValues();
+
+    const rol_system_instrution = data.filter(c=> c[1] === character).map(i=>{
+        return i[2]
+    })
+
+    return rol_system_instrution
+}
+
+function generarResumenChat(dataFiltrada) {
+    if (dataFiltrada) {
+        return dataFiltrada.map((item, i) => {
+            return `(${i + 1}) ${item["Razón social"]} – CUIT: ${item.Cuit} – Estado: ${item["Estado"]} – Trámite: ${item["Tipo de Trámite"]} – Expte: ${item["Número de expediente"]}`;
+        }).join('\n');
+    } else {
+        return "";
+    }
+}
+
+
+function geminiAPI(resultado, dataUser) {
+    const datos = generarResumenChat(resultado);
+    const role = systemInstructionCharacter(dataUser.character_type);
+
+    let textoPrompt;
+    if (datos && datos.trim() !== "") {
+        textoPrompt = `Hola Soy ${dataUser.name}. Sé breve, conciso, y natural. Si ${datos} no está vacío, ¿podrías decirme el estado de mis trámites? No más de 1000 caracteres con emijis. No utilices *.`;
+    } else {
+        textoPrompt = `Hola Soy ${dataUser.name}. Bienvenido al sistema. Por favor hacé click sobre mí para actualizar tus datos.`;
+    }
+
     const payload = {
-        "contents": [
+        contents: [
             {
-                "role": "USER",
-                "parts": [
-                    {
-                        "text": `Considerando el número de tramites "sin evaluar" o de en estado de evaluación o subsanación, no providencia notificada o no corresponde. Sé breve, conciso, y natural. Quiero que respondas como si fueras un argentino rioplatense, sobre el usuario. ${datos}. Soy Brenda, ¿podrías decirme el estado de mis trámites? No más de 500 caracteres con emijis. No utilices *`
-                    }
-                ]
+                role: "USER",
+                parts: [{ text: textoPrompt }]
             }
         ],
-        "systemInstruction": {
-            //"role": string,
-            "parts": [
-                {
-                    "text": "responde como un maestro"
-                }
+        systemInstruction: {
+            parts: [
+                { text: `Actuá como ${role}. Adoptá el estilo de un maestro amable y claro.` }
             ]
         }
     };
 
-
     const params = {
-        'contentType': 'application/json',
-        'methd': 'post',
-        'payload': JSON.stringify(payload)
-    }
+        contentType: 'application/json',
+        method: 'post',
+        payload: JSON.stringify(payload)
+    };
 
-    const response = UrlFetchApp.fetch(geminiUrl, params);
-    const data = JSON.parse(response);
-    console.log(data.candidates[0].content.parts[0].text)
-    return data.candidates[0].content.parts[0].text;
+    try {
+        const response = UrlFetchApp.fetch(geminiUrl, params);
+        const data = JSON.parse(response);
+        const texto = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!texto) throw new Error("Respuesta vacía");
+        console.log(texto);
+        return texto;
+    } catch (err) {
+        console.error("Error al obtener respuesta de Gemini:", err);
+        return "⚠️ Hubo un problema al generar la respuesta. Intenta nuevamente.";
+    }
 }
+
+
+
+
+function leerContenidoDeGoogleDoc(docId) {
+    const doc = Docs.Documents.get(docId);
+    const bodyElements = doc.body.content;
+    let textoPlano = '';
+
+    bodyElements.forEach(elemento => {
+        if (elemento.paragraph && elemento.paragraph.elements) {
+            elemento.paragraph.elements.forEach(el => {
+                if (el.textRun && el.textRun.content) {
+                    textoPlano += el.textRun.content;
+                }
+            });
+        }
+    });
+
+    return textoPlano;
+}
+
+function esGoogleDoc(url) {
+    return url.includes('docs.google.com/document');
+}
+
+function extraerDocId(url) {
+    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    return match ? match[1] : null;
+}
+

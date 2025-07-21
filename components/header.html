@@ -4,10 +4,17 @@
       .econocimiento/ <br>
       <span class="ms-2" id="typing"></span>
     </h1>
-    <h5 class="pt-2 ms-2 ps-2 d-flex justify-content-start gap-2" id="">
-      <span class="badge rounded-pill text-bg-primary" role="button" href="https://lanacion.com">Sistema LEC</span>
-      <span class="badge rounded-pill text-bg-danger" role="button">Dashboard <i class="bi bi-fire"></i></span>
-      <span class="badge rounded-pill text-bg-warning" role="button">Lufe <i class="bi bi-fingerprint"></i></span>
+    <h5 class="pt-2 ms-2 ps-2 d-flex justify-content-start gap-2">
+      <a href="https://lec.produccion.gob.ar/index.html#/dashboard" class="badge rounded-pill text-bg-primary text-decoration-none" role="button"
+        target="_blank">
+        Sistema LEC
+      </a>
+      <a href="https://lookerstudio.google.com/reporting/b60752fd-4a99-48a3-9b6a-f32d20292b5c" class="badge rounded-pill text-bg-danger text-decoration-none" role="button"target="_blank"> 
+        Dashboard <i class="bi bi-fire"></i>
+      </a>
+      <a href="https://legajounico.produccion.gob.ar/loginad" class="badge rounded-pill text-bg-warning text-decoration-none" role="button" target="_blank">
+        Lufe <i class="bi bi-fingerprint"></i>
+      </a>
     </h5>
   </div>
 
@@ -24,11 +31,15 @@
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-    <img class="me-5 float" width="150" height="150" src="https://img.icons8.com/doodle/150/jake.png" alt="jake"  onclick="toggleInfo(event)"/>
+    <!-- <img class="me-5 float" width="150" height="150" src="https://img.icons8.com/doodle/150/jake.png" alt="jake"  onclick="toggleInfo(event)"/> -->
+    <!--  <img class="me-5 float" width="150" height="150" src="https://cdn.picrew.me/shareImg/org/202505/1224957_XGzqBERR.png" alt="jake"  onclick="toggleInfo(event)"/> -->
+    <img id="character_selector" class="me-5 float" width="150" height="150" src="https://i.imgur.com/5k0GVj7.png" alt="jake"  onclick="toggleInfo(event)"/>
+
+
 
     <!-- Globo de texto -->
     <div id="infoBubble" class="float position-absolute top-50 end-100 bg-light border border-secondary rounded p-2"
-      hidden style="transform: translate(-10%, 2%); min-width: 200px; z-index: 10; margin-right: 10px;">
+      hidden style="transform: translate(-10%, 2%); min-width: 250px; margin-right: 10px;">
 
       <!-- Botón de cierre más pequeño -->
       <button type="button" class="btn-close position-absolute top-0 end-0 m-1 small-close-btn" aria-label="Cerrar" onclick="document.getElementById('infoBubble').hidden = true;"></button>
@@ -40,7 +51,7 @@
 
 </div>
 <div class="d-flex justify-content-between">
+  <div id="updateStatus" style="display:none">🔄 Actualizando datos...</div>
   <div id="cantRegistros" class="form-text"></div>
   <i id="reload" role="button" class="bi bi-arrow-clockwise me-2" onclick="SetDataForSearch(dataUser)"></i>
 </div>
-

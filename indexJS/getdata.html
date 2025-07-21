@@ -1,37 +1,94 @@
 <script>
+  /* VARIABLES GLOBALES */
 
   var columToTable;
   var rowToTable;
   var gridApi;
   var dataRegular;
   var dataSetCierres;
+  var dataRegistro; 
+  var listaModelosDisponibles;
 
-  function GetData() {
-  // Use a single Promise.all to handle both requests
+  function GetData(refresh) {
+    const myGridElement = document.querySelector('#myGrid');
+    const updateStatus = document.getElementById('updateStatus');
+
+
+    if (myGridElement && !refresh) {
+      showLoadingAnimation();
+      myGridElement.classList.add("myGrid-blur");
+    }
+
+
+    if (updateStatus) {
+      updateStatus.style.display = 'block'; // Mostrar mensaje "actualizando"
+    }
+
     return Promise.all([
       new Promise((resolve, reject) => {
         google.script.run
           .withSuccessHandler((dataTable) => {
             dataRegular = dataTable;
-            loadTable(dataRegular);
+            console.log("✅ dataRegular:", dataRegular);
             resolve();
           })
-          .withFailureHandler(reject)
+          .withFailureHandler((err) => {
+            console.error("❌ Error al obtener dataRegular", err);
+            reject(err);
+          })
           .getData();
       }),
       new Promise((resolve, reject) => {
         google.script.run
           .withSuccessHandler((dataTable) => {
             dataSetCierres = dataTable;
+            console.log("✅ dataSetCierres:", dataSetCierres);
             resolve();
           })
-          .withFailureHandler(reject)
+          .withFailureHandler((err) => {
+            console.error("❌ Error al obtener dataSetCierres", err);
+            reject(err);
+          })
           .getCierres();
       })
-    ]);
+    ])
+    .then(() => {
+      // 🔁 Sólo mostramos la tabla que corresponde
+      if (selectedTable === 'regulares-outlined') {
+        loadTable(dataRegular);
+      } else {
+        loadTable(dataSetCierres);
+      }
+    })
+    .finally(() => {
+      hideLoadingAnimation();
+      hideWelcomeAnimation();
+      myGridElement?.classList.remove("myGrid-blur");
+      if (updateStatus) {
+        updateStatus.style.display = 'none'; // Ocultar mensaje "actualizando"
+      }
+    });
   }
 
+  function getDatosRegistro(){
+    google.script.run
+      .withSuccessHandler((data) => {
+        dataRegistro = data; 
+    }).getRegistro();
+  }  
+
+  getDatosRegistro();
+
+
+  function getModelsToClient(){
+    google.script.run
+      .withSuccessHandler((data) => {
+        listaModelosDisponibles = data;         
+    }).getModels();
+  }  
+
+  getModelsToClient();
   
-  
+      
 
 </script>

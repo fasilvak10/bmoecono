@@ -1,0 +1,453 @@
+<script>
+  // Optimized version of the conciliation modal code
+
+  function bienvenidaText() {
+      const elemento = document.getElementById("modalConciliacion_typing");
+
+      if (elemento && elemento.innerHTML.trim() !== "conciliación") { 
+          new Typed('#modalConciliacion_typing', {
+              strings: ['conciliación'],
+              typeSpeed: 100,
+              showCursor: false,
+              startDelay: 1000, // Retraso de 1 segundo antes de iniciar la animación
+          });
+      }
+  }
+
+
+  // Global variables
+  let dataConciliacion = [];
+  let filteredData = [];
+  let conci = [];
+  let ultimaFechaConciliacion;
+
+  // DOM Element selectors - cached for performance
+  const DOM = {
+    get: (id) => document.getElementById(id),
+    getAll: (selector) => document.querySelectorAll(selector)
+  };
+
+  // Open Google Drive folder
+  function abrirCarpetaConciliacion() {
+    window.open('https://drive.google.com/drive/folders/1tm5LPppaozDlnK3IQpIoItDXQFpC7W9H', '_blank');
+  }
+
+  // Format number for conciliation
+  function formatearNumeroConciliacion(numero) {
+    if (!numero) return '0';
+    return numero.replace(/[^\d.,-]/g, '')
+                .replace(/\./g, '')
+                .replace(',', '.');
+  }
+
+  // Parse currency value to number
+  function parseCurrencyToNumber(value) {
+    if (!value) return 0;
+    const cleanValue = value.replace(/[^\d,-]/g, '').replace(',', '.');
+    return parseFloat(cleanValue) || 0;
+  }
+
+  // Format number as currency
+  function formatCurrency(value) {
+    return value.toLocaleString('es-ar', {
+      style: 'currency',
+      currency: 'ARS'
+    });
+  }
+
+  // Download/create conciliation file
+  function descargarArchivo() {
+    try {
+      Swal.fire({
+          text: 'Se creará el archivo de Conciliación, aguardá unos instantes',
+      });
+
+      const loadingElement = DOM.get("modalConciliacion_loading");
+      loadingElement.hidden = false;
+      
+      
+      const name = DOM.get("modalConciliacion_filtro-nombre").value;
+      const cuit = conci[0][3];
+      const periodoInicio = DOM.get("modalConciliacion_filtro-estado").value;
+      const periodoFin = DOM.get("modalConciliacion_filtro-estado-2").value;
+      const beneficios = DOM.get("modalConciliacion_beneficiosOtorgados").innerText;
+      const saldo = DOM.get("modalConciliacion_saldoTotal").innerText;
+      
+      const periodofinal = `${convertirPeriodo(periodoInicio)} - ${convertirPeriodo(periodoFin)}`;
+      const numerosFormateados = formatearNumeroConciliacion(beneficios);
+      const saldoFormateado = formatearNumeroConciliacion(saldo);
+
+      // Prepare data for export
+      const encabezado = ['Periodo', 'Tipo', 'Beneficio', 'Tasa', 'Pagos', 'Saldo'];
+      const arregloConEncabezado = [
+        encabezado, 
+        ...conci.map(i => [i[1], i[4], i[5], i[6], i[7], i[8]])
+      ];
+
+      // Call Google Apps Script function
+      if (typeof google !== 'undefined') {
+        google.script.run
+          .withSuccessHandler((result) => {
+            loadingElement.hidden = true;
+            Swal.fire({
+              text: 'Se ha creado la petición con éxito',
+              confirmButtonText: `<a href="${result}" target="_blank" style="color: inherit; text-decoration: none;">Acceder al Archivo</a>`
+                
+            });
+          })
+          .crearConciliacion(name, cuit, arregloConEncabezado, numerosFormateados, periodofinal, saldoFormateado, dataUser);
+      } else {
+        console.error('google is not defined. Ensure Google Apps Script API is available.');
+        alert('Error: Google Apps Script API is not available.');
+      }
+
+    } catch (error) {
+      console.error('Error al descargar archivo:', error);
+      alert('Ocurrió un error al crear el archivo de conciliación');
+    }
+  }
+
+  function SetDataForSearchConciliacion() {
+    if (typeof google !== 'undefined') {
+      google.script.run
+        .withSuccessHandler(function(dataReturned) {
+          dataConciliacion = dataReturned.datos.slice();
+          filteredData = dataConciliacion;
+
+          
+          ultimaFechaConciliacion = dataReturned.ultimaFecha;
+          console.log("Última actualización:", ultimaFechaConciliacion);
+
+          // Initialize UI
+          initializeUI();
+
+          // Remove loading indicator
+          const loadingElement = DOM.get("modalConciliacion_loading");
+          if (loadingElement) loadingElement.hidden = true;
+        })
+        .arregloConciliacion(dataUser);
+    } else {
+      console.error('google is not defined. Ensure Google Apps Script API is available.');
+      alert('Error: Google Apps Script API is not available.');
+    }
+  }
+
+
+  // Initialize UI components
+  function initializeUI() {
+    // Initialize search and filters
+    buscadorConciliacion();
+    buscarDatosConciliacion();
+    updateFilterDropdowns();
+    
+    // Set up event listeners
+    setupEventListeners();
+    bienvenidaText();
+  }
+
+
+  // Set up all event listeners
+  function setupEventListeners() {
+    // Search input
+    DOM.get("modalConciliacion_buscarRegistro").addEventListener("input", handleSearchInput);
+    
+    // Filter dropdowns
+    DOM.get("modalConciliacion_filtro-nombre").addEventListener("change", handleFilterChange);
+    DOM.get("modalConciliacion_filtro-empresa").addEventListener("change", handleFilterChange);
+    DOM.get("modalConciliacion_filtro-estado").addEventListener("change", handleFilterChange);
+    DOM.get("modalConciliacion_filtro-estado-2").addEventListener("change", handleFilterChange);
+    
+    // Buttons
+    //DOM.get("modalConciliacion_descargar").addEventListener("click", descargarArchivo);
+    //DOM.get("modalConciliacion_carpeta").addEventListener("click", abrirCarpetaConciliacion);
+  }
+
+  // Handle search input
+  function handleSearchInput() {
+    buscadorConciliacion();
+    updateFilterDropdowns();
+    buscarDatosConciliacion();
+  }
+
+  // Handle filter change
+  function handleFilterChange(e) {
+    const filterId = e.target.id;
+    
+    if (filterId === "modalConciliacion_filtro-nombre") {
+      updateCompanyFilter();
+    }
+    
+    if (filterId === "modalConciliacion_filtro-nombre" || filterId === "modalConciliacion_filtro-empresa") {
+      updatePeriodFilters();
+    }
+    
+    buscarDatosConciliacion();
+  }
+
+  // Search functionality
+  function buscadorConciliacion() {
+    const searchText = DOM.get("modalConciliacion_buscarRegistro").value.toString().toLowerCase();
+    
+    if (!searchText) {
+      filteredData = dataConciliacion;
+      return;
+    }
+    
+    const searchWords = searchText.split(/\s+/);
+    const searchColumns = [1, 2, 3]; // Columns to search in
+    
+    filteredData = dataConciliacion.filter(row => 
+      searchWords.every(word => 
+        searchColumns.some(colIndex => 
+          row[colIndex].toString().toLowerCase().includes(word)
+        )
+      )
+    );
+  }
+
+  // Update all filter dropdowns
+  function updateFilterDropdowns() {
+    updateNameFilter();
+    updateCompanyFilter();
+    updatePeriodFilters();
+  }
+
+  // Update name filter dropdown
+  function updateNameFilter() {
+    const nameSelect = DOM.get("modalConciliacion_filtro-nombre");
+    populateDropdown(nameSelect, filteredData, 2, true);
+  }
+
+  // Update company filter dropdown
+  function updateCompanyFilter() {
+    const nameFilter = DOM.get("modalConciliacion_filtro-nombre").value;
+    const companySelect = DOM.get("modalConciliacion_filtro-empresa");
+    
+    let dataToFilter = filteredData;
+    if (nameFilter !== "Todos") {
+      dataToFilter = filteredData.filter(row => row[2] === nameFilter);
+    }
+    
+    populateDropdown(companySelect, dataToFilter, 4, true);
+  }
+
+  // Update period filter dropdowns
+  function updatePeriodFilters() {
+    const periodStartSelect = DOM.get("modalConciliacion_filtro-estado");
+    const periodEndSelect = DOM.get("modalConciliacion_filtro-estado-2");
+    
+    // Sort data by period
+    const sortedData = [...filteredData].sort((a, b) => a[1].localeCompare(b[1]));
+    
+    populatePeriodDropdown(periodStartSelect, sortedData, 1);
+    populatePeriodDropdown(periodEndSelect, sortedData, 1);
+  }
+
+  // Populate dropdown with unique values
+  function populateDropdown(selectElement, data, columnIndex, includeAll = false) {
+    const currentValue = selectElement.value;
+    const uniqueValues = new Set();
+    
+    selectElement.innerHTML = '';
+    
+    if (includeAll) {
+      const optionAll = document.createElement("option");
+      optionAll.textContent = "Todos";
+      optionAll.value = "Todos";
+      selectElement.appendChild(optionAll);
+    }
+    
+    // Sort data for name dropdown (column 2)
+    const sortedData = columnIndex === 2 
+      ? [...data].sort((a, b) => a[2].localeCompare(b[2])) 
+      : data;
+    
+    sortedData.forEach(row => {
+      const value = row[columnIndex];
+      if (!uniqueValues.has(value)) {
+        const option = document.createElement("option");
+        option.textContent = value;
+        option.value = value;
+        selectElement.appendChild(option);
+        uniqueValues.add(value);
+      }
+    });
+    
+    // Try to restore previous selection if it exists in new options
+    if (currentValue && [...selectElement.options].some(opt => opt.value === currentValue)) {
+      selectElement.value = currentValue;
+    }
+  }
+
+  // Populate period dropdown with numeric values
+  function populatePeriodDropdown(selectElement, data, columnIndex) {
+    const currentValue = selectElement.value;
+    const uniqueValues = new Set();
+    
+    selectElement.innerHTML = '';
+    
+    data.forEach(row => {
+      const value = parseInt(row[columnIndex], 10);
+      if (!isNaN(value) && !uniqueValues.has(value)) {
+        const option = document.createElement("option");
+        option.textContent = value;
+        option.value = value;
+        selectElement.appendChild(option);
+        uniqueValues.add(value);
+      }
+    });
+    
+    // Try to restore previous selection if it exists in new options
+    if (currentValue && [...selectElement.options].some(opt => opt.value === currentValue)) {
+      selectElement.value = currentValue;
+    }
+  }
+
+  // Search and display data based on filters
+  function buscarDatosConciliacion() {
+    const filtroEvaluador = DOM.get("modalConciliacion_filtro-nombre").value;
+    const filtroEmpresa = DOM.get("modalConciliacion_filtro-empresa").value;
+    const filtroEstado = parseInt(DOM.get("modalConciliacion_filtro-estado").value);
+    const filtroEstado1 = parseInt(DOM.get("modalConciliacion_filtro-estado-2").value);
+    
+    // Filter data based on selected filters
+    const datosFiltrados = filteredData.filter(row => {
+      const evaluador = row[2];
+      const empresa = row[4];
+      const periodo = parseInt(row[1]);
+      
+      const evaluadorCumple = filtroEvaluador === "Todos" || evaluador === filtroEvaluador;
+      const empresaCumple = filtroEmpresa === "Todos" || empresa === filtroEmpresa;
+      const periodoCumple = !isNaN(periodo) && periodo >= filtroEstado && periodo <= filtroEstado1;
+      
+      return evaluadorCumple && empresaCumple && periodoCumple;
+    });
+    
+    // Update global variable for download function
+    conci = datosFiltrados;
+    
+    // Update UI with filtered data
+    updateTableUI(datosFiltrados);
+    updateSummaryUI(datosFiltrados);
+
+    //Funcion para darle fecha
+    document.getElementById('modalConciliacion_actualizacion').innerHTML = `Actualizado ${ultimaFechaConciliacion}`
+
+    
+    //FUNCTION PARA PERIODO
+    document.getElementById('modalConciliacion_periodo').innerHTML = '';
+    if(filtroEstado){ document.getElementById('modalConciliacion_periodo').innerHTML = `Periodo Seleccionado ${convertirPeriodo(filtroEstado)} - ${convertirPeriodo(filtroEstado1)}`}
+    
+  }
+
+  // Update table with filtered data
+  function updateTableUI(data) {
+    const tableBody = DOM.get("modalConciliacion_tableBody-usuarios");
+    const template = DOM.get("modalConciliacion_rowTemplate");
+    
+    // Clear table
+    tableBody.innerHTML = "";
+    
+    // Add rows
+    data.forEach(row => {
+      const tr = template.content.cloneNode(true);
+      
+      tr.querySelector(".template-periodoColConciliacion").textContent = row[1];
+      tr.querySelector(".template-empresaConciliacion").textContent = row[2];
+      tr.querySelector(".template-cuitConciliacion").textContent = row[3];
+      tr.querySelector(".template-tipoBeneficioConciliacion").textContent = row[4];
+      tr.querySelector(".template-beneficiosConciliacion").textContent = row[5];
+      tr.querySelector(".template-tasaConciliacion").textContent = row[6];
+      tr.querySelector(".template-pagosConciliacion").textContent = row[7];
+      tr.querySelector(".template-saldoConciliacion").textContent = row[8];
+      
+      tableBody.appendChild(tr);
+    });
+  }
+
+  // Update summary information
+  function updateSummaryUI(data) {
+    // Update record count
+    DOM.get('modalConciliacion_cantRegistros').innerHTML = `Registros: ${data.length}`;
+    
+    if (data.length === 0) {
+      // Clear summary if no data
+      DOM.get('modalConciliacion_beneficiosOtorgados').innerHTML = 'Beneficios: $0,00';
+      DOM.get('modalConciliacion_tasaTotal').innerHTML = 'Tasa: $0,00';
+      DOM.get('modalConciliacion_pagosTotal').innerHTML = 'Pagos: $0,00';
+      DOM.get('modalConciliacion_saldoTotal').innerHTML = 'Saldo: $0,00';
+      return;
+    }
+    
+    // Calculate totals
+    let totalBeneficios = 0;
+    let totalTasa = 0;
+    let totalPagos = 0;
+    let totalSaldo = 0;
+    
+    data.forEach(row => {
+      totalBeneficios += parseCurrencyToNumber(row[5]);
+      totalTasa += parseCurrencyToNumber(row[6]);
+      totalPagos += parseCurrencyToNumber(row[7]);
+      totalSaldo += parseCurrencyToNumber(row[8]);
+    });
+    
+    // Update summary UI
+    DOM.get('modalConciliacion_beneficiosOtorgados').innerHTML = `Beneficios: ${formatCurrency(totalBeneficios)}`;
+    DOM.get('modalConciliacion_tasaTotal').innerHTML = `Tasa: ${formatCurrency(totalTasa)}`;
+    DOM.get('modalConciliacion_pagosTotal').innerHTML = `Pagos: ${formatCurrency(totalPagos)}`;
+    DOM.get('modalConciliacion_saldoTotal').innerHTML = `Saldo: ${formatCurrency(totalSaldo)}`;
+  }
+
+  // Initialize when modal is shown
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = DOM.get('modalConciliacion');
+    if (modal) {
+      // Use Bootstrap's modal events if available
+      if (typeof bootstrap !== 'undefined') {
+        const bsModal = new bootstrap.Modal(modal);
+        modal.addEventListener('shown.bs.modal', SetDataForSearchConciliacion);
+      } else {
+        // Fallback for when Bootstrap JS is not loaded
+        modal.addEventListener('click', function(e) {
+          if (e.target.classList.contains('modal') && !modal.dataset.loaded) {
+            SetDataForSearchConciliacion();
+            modal.dataset.loaded = 'true';
+          }
+        });
+      }
+    }
+  });
+
+  // For testing in Node.js environment
+  if (typeof window === 'undefined') {
+    console.log("This code is designed to run in a browser environment with Google Apps Script");
+  }
+
+
+  function convertirPeriodo(valor) {
+    if (!valor) return "Valor inválido";
+
+    // Convertimos a string y quitamos caracteres no numéricos (como "-" o "/")
+    const limpio = valor.toString().replace(/[^0-9]/g, '').padStart(6, '0');
+
+    const meses = [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ];
+
+    // Validamos que tenga exactamente 6 dígitos
+    if (!/^\d{6}$/.test(limpio)) return "Formato inválido";
+
+    const anio = limpio.slice(0, 4);
+    const mesIndex = parseInt(limpio.slice(4, 6), 10) - 1;
+
+    if (mesIndex < 0 || mesIndex > 11) return "Mes inválido";
+
+    const mesCapitalizado = meses[mesIndex].charAt(0) + meses[mesIndex].slice(1);
+
+    return `${mesCapitalizado} ${anio}`;
+  }
+
+
+</script>

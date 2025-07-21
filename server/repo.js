@@ -90,6 +90,34 @@ function getDataRepo() {
         return [responsable, name, cuit, expediente, tramite, ulMovimiento, estado]
     })
 
-    console.log({ headers: header, data: data }) 
+    console.log({ headers: header, data: data })
     //return { headers: header, data: data };
+}
+
+function traerUsuariosR() {
+
+    const ss = SpreadsheetApp.openById('1Ux_aSHfhQhmKIONJTOvqXzdpof80zgPzPfamQt_DqDg');
+    const userLogin = ss.getSheetByName('user')
+
+
+    const [header, ...data] = userLogin.getDataRange().getDisplayValues().map(i => {
+        let nombre = i[3];
+        let mail = i[1];
+        let funcion = i[4];
+        let rol = i[6];
+        let equipo = i[7];
+        let estado = i[8];
+        let session = i[9];
+        let timeSession = i[10];
+        let e_click = i[11];
+        let access_day = i[12];
+        let timers = i[13];
+        let checkin = i[14];
+        let character_type = i[15];
+        let dark_mode = i[16];
+
+        return [nombre, mail, funcion, rol, equipo, estado, session, timeSession, e_click, access_day, timers, checkin, character_type, dark_mode]
+    })
+    console.log({ headers: header, data: data })
+
 }

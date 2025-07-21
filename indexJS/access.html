@@ -1,5 +1,6 @@
 <script>
   var dataUser;
+  var session;
 
   function enviarFormulario(form) {
     event.preventDefault();
@@ -12,16 +13,30 @@
         console.log(usuario);
         document.getElementById('saludoUsuario').innerHTML = `Hola ${usuario[0].completeName}!`;
         dataUser = usuario[0];
+        session = dataUser.timeSession;
+        console.log(session)
+        //verificarSesion();
 
         // Esperar a que GetData termine
-        await GetData();
+        GetData();
 
         const loginElement = document.getElementById("login");
         if (loginElement) {
           loginElement.hidden = true;
         }
-        toggleInfo()
-        //launchConfetti();
+
+        reglasOnboarding();
+        animarCards();
+        const onboarding = document.getElementById("onboarding");
+        if(usuario[0].checkin === true) {
+          const imgSrc = usuario[0].linkCharacter
+          mostrarPersonajeSeleccionado(imgSrc);
+          onboarding.hidden = true;
+          showWelcomeAnimation();
+
+        };
+        
+        
       })
       .withFailureHandler(showError)
       .verificarPassword(form);
@@ -39,6 +54,15 @@
   function loadingshow(){
     document.querySelector('#submitLogin').classList.toggle("d-none");
     document.querySelector('#LoadingButton02').classList.toggle("d-none");
+
+
+  }
+
+  function loadingCharge(botonOriginal, botonLoading) {
+
+    botonOriginal.classList.add('d-none');
+    botonLoading.classList.remove('d-none');
+
   }
 
   function loadArtwork() {
@@ -75,10 +99,68 @@
 
   function setRandomBackgroundImage() {
     const imgElement = document.getElementById('backgroundImage');
-    imgElement.src = getRandomImage();
+    //imgElement.src = getRandomImage();
   }
 
-  setRandomBackgroundImage();
+  //setRandomBackgroundImage();
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Seleccionar solo los botones "Elegíme!" dentro del #onboarding
+    const onboarding = document.getElementById('onboarding');
+    const botones = onboarding.querySelectorAll('.card .btn.btn-outline-primary');
+
+    botones.forEach(boton => {
+      boton.addEventListener('click', (event) => {
+        event.preventDefault(); // Evitar el comportamiento del <a>
+
+        const card = boton.closest('.card');
+        const imgSrc = card.querySelector('img').getAttribute('src');
+        const nombre = card.querySelector('.card-title').textContent;
+
+        // Tu lógica personalizada con los datos
+        console.log('Seleccionado:', nombre);
+        console.log('Imagen:', imgSrc);
+
+        seleccionarPersonaje(nombre, imgSrc); // Llamá a tu función
+      });
+    });
+  });
+
+  function seleccionarPersonaje(nombre, imgSrc) {
+    console.log(`Elegiste a: ${nombre}\nImagen: ${imgSrc}`);
+    const usuario = dataUser.name;
+
+    // Ocultar el onboarding
+    mostrarPersonajeSeleccionado(imgSrc);
+    document.getElementById('onboarding').hidden = true;
+    launchConfetti();
+
+    google.script.run
+      .withSuccessHandler(() => {
+        
+      })
+      .withFailureHandler((error) => {
+        console.error('Error al seleccionar personaje:', error.message);
+      })
+      .selectedCharacter(usuario, nombre, imgSrc);
+  }
+
+  function mostrarPersonajeSeleccionado(imgSrc) {
+    console.log('Personaje seleccionado correctamente');
+    const personajeImg = document.getElementById("character_selector");
+    
+    personajeImg.src = imgSrc;
+
+    // Reiniciar la animación si ya se había usado antes
+    personajeImg.classList.remove("img-slide-up");
+    void personajeImg.offsetWidth; // Trigger reflow
+    personajeImg.classList.add("img-slide-up");
+
+    //toggleInfo();
+    iniciarTypedUnaVez();
+  }
+
 
 
 

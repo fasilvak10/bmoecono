@@ -1,62 +1,169 @@
 <script>
-    function validarFormulario() {
-        const form = document.getElementById('crearUsuario');
-        const getFormValue = (id) => form.elements[id]?.value || '';
-        const getInnerHTML = (id) => document.getElementById(id)?.innerHTML || '';
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('crearUsuario');
+    const estadoSelect = document.getElementById("estadoEmpresa");
+    const ifTecnico = document.getElementById("iftecnico");
+    const provi = document.getElementById("provi");
+    const acto0provi = document.getElementById("acto0provi");
+    const fechaProvi = document.getElementById("fechaProvi");
+    const fechaActo = document.getElementById("fechaActo");
+    const fechaInscripcion = document.getElementById("fechaInscripcion");
+    const fechaSubsanacion = document.getElementById("fechaSubsanacion");
+    const cantidadDias = document.getElementById("cantidadDias");
 
-        const empresa = {
-            empresa: getInnerHTML('nombreEmpresa'),
-            cuit: getInnerHTML('cuit')?.replace(/\D/g, ''),
-            id: getFormValue('expediente'),
-            actividad: getFormValue('actividad'),
-            periodoIncial: getFormValue('periodoIncial'),
-            periodoFinal: getFormValue('periodoFinal'),
-            estado: getFormValue('estadoEmpresa'),
-            tamanio: getFormValue('tamanio'),
-            fechaSubsanacion: getFormValue('fechaSubsanacion'),
-            cantidadDias: getFormValue('cantidadDias'),
-            conclusion: getFormValue('conclusion'),
-            masaSalarial: getFormValue('masaSalarial'),
-            nomina: getFormValue('nomina'),
-            ventasTotales: getFormValue('ventasTotales'),
-            ventasPromo: getFormValue('ventasPromo'),
-            exportaciones: getFormValue('exportaciones'),
-            ventasTotalesanio2: getFormValue('ventasanio02'),
-            ventasPromoanio2: getFormValue('ventasPromoanio2'),
-            exportacionesanio2: getFormValue('exportacionesanio2'),
-            capacitacion: getFormValue('capacitacion'),
-            imasd: getFormValue('imasd'),
-            calidadTipo: getFormValue('calidadTipo'),
-            calidadEstado: getFormValue('calidadEstado'),
-            revisionLegal: getInnerHTML('fechaRevisionLegal'),
-            revisionFinal: getInnerHTML('fecha1278now'),
-            revi1266: getInnerHTML('flex-dato-afip'),
-            reviEmision: getInnerHTML('flex-dato-emision') !== '',
-            iftecnico: getFormValue('iftecnico'),
-            actoOprovi: getFormValue('provi'),
-            numacto: getFormValue('numacto'),
-            fechaActo: getFormValue('fechaActo'),
-            fechaProvi: getFormValue('fechaProvi'),
-            fechaInscripcion: getFormValue('fechaInscripcion'),
-            observaciones: getFormValue('observaciones'),
+    estadoSelect.addEventListener("change", function () {
+      const estado = estadoSelect.value;
+
+      // Limpiar errores previos
+      [ifTecnico,provi, acto0provi,fechaProvi,fechaActo,fechaInscripcion,fechaSubsanacion, cantidadDias].forEach(el => {
+        if (el) el.classList.remove("is-invalid");
+      });
+
+      // Informe Técnico Firmado
+      if (estado === "Informe Técnico Firmado") {
+        if (!ifTecnico.value.trim()) {
+          ifTecnico.classList.add("is-invalid");
+        }
+      }
+
+      //  Providencia Notificada
+      if (estado === "Providencia Notificada") {
+        if (!provi.value.trim()) {
+          provi.classList.add("is-invalid");
+        }
+        if (!fechaProvi.value.trim()) {
+          fechaProvi.classList.add("is-invalid");
+        } 
+      } 
+
+      // Aprobado
+      if (estado === "Aprobado") {
+        if (!acto0provi.value.trim()) {
+          acto0provi.classList.add("is-invalid");
+        }
+        if (!fechaProvi.value.trim()) {
+          fechaProvi.classList.add("is-invalid");
+        }
+        if (!fechaActo.value.trim()) {
+          fechaActo.classList.add("is-invalid");
+        }
+        if (!fechaInscripcion.value.trim()) {
+          fechaInscripcion.classList.add("is-invalid");
+        }
+      }
+
+      //  Subsanación
+      if (estado === "Subsanación") {
+        if (!fechaSubsanacion.value.trim()) {
+          fechaSubsanacion.classList.add("is-invalid");
+        }
+        if (!cantidadDias.value.trim()) {
+          cantidadDias.classList.add("is-invalid");
+        }
+      }
+    });
+
+    // Limpiar errores dinamicamente cuando se cambien los estados. 
+    [ifTecnico, acto0provi,fechaProvi,provi, fechaActo,fechaInscripcion,fechaSubsanacion, cantidadDias].forEach(function (el) {
+      if (el) { el.addEventListener("input", function () {
+          if (el.value.trim()) {
+            el.classList.remove("is-invalid");
+          }
+        });
+      }
+    });
+  });
+
+  function validarFormulario(botonOriginal, botonLoading) {
+
+    loadingCharge(botonOriginal, botonLoading);
+
+    const form = document.getElementById('crearUsuario');
+    form.classList.add('blur');
+    const getFormValue = (id) => form.elements[id]?.value || '';
+    const getInnerHTML = (id) => document.getElementById(id)?.innerHTML || '';
+
+    /* EMPRESA DEBE CONTENER UNICAMENTE PROPIEDADES COMPARTIDAS */
+    let empresa = {
+        empresa: getInnerHTML('nombreEmpresa'),
+        cuit: getFormValue('cuit')?.replace(/\D/g, ''),
+        id: getFormValue('expediente'),
+        actividad: getFormValue('actividad'),
+        periodoIncial: getFormValue('periodoIncial'),
+        periodoFinal: getFormValue('periodoFinal'),
+        estado: getFormValue('estadoEmpresa'),
+        revisionLegal: getInnerHTML('fechaRevisionLegal'),
+        revisionFinal: getInnerHTML('fechaRevisionFinal'),
+        revi1266: getInnerHTML('flex-dato-afip'),
+        reviEmision: getInnerHTML('flex-dato-emision') !== '',
+        iftecnico: getFormValue('iftecnico'),
+        actoOprovi: getFormValue('provi'),
+        fechaProvi: getFormValue('fechaProvi'),
+        observaciones: getFormValue('observaciones'),
+        revisorRealLegal: getInnerHTML('revisorRealLegal').slice(1, -1),
+        revisorRealFinal: getInnerHTML('revisorRealFinal').slice(1, -1),
+        dataUser
+    };
+
+    /* ASIGNACIÓN PROPIEDADES EXCLUSIVAS */
+    if (selectedTable === 'regulares-outlined') {
+        empresa.ventasTotales = getFormValue('ventasTotales');
+        empresa.tamanio = getFormValue('tamanio');
+        empresa.fechaSubsanacion = getFormValue('fechaSubsanacion');
+        empresa.cantidadDias = getFormValue('cantidadDias');
+        empresa.conclusion = getFormValue('conclusion');
+        empresa.masaSalarial = getFormValue('masaSalarial');
+        empresa.nomina = getFormValue('nomina');
+        empresa.ventasPromo = getFormValue('ventasPromo');
+        empresa.exportaciones = getFormValue('exportaciones');
+        empresa.ventasTotalesanio2 = getFormValue('ventasanio02');
+        empresa.ventasPromoanio2 = getFormValue('ventasPromoanio2');
+        empresa.exportacionesanio2 = getFormValue('exportacionesanio2');
+        empresa.capacitacion = getFormValue('capacitacion');
+        empresa.imasd = getFormValue('imasd');
+        empresa.calidadTipo = getFormValue('calidadTipo');
+        empresa.calidadEstado = getFormValue('calidadEstado');
+        empresa.numacto = getFormValue('numacto');
+        empresa.fechaActo = getFormValue('fechaActo');
+        empresa.fechaInscripcion = getFormValue('fechaInscripcion');
+    } else {
+        empresa.cuerpoAuditor = getFormValue('cuerpoAuditor');
+        empresa.observacionAuditoria = getFormValue('observacionAuditoria');
+        empresa.cantidadDiasProvi = getFormValue('cantidadDiasProvi');
+        empresa.conclusionTecnico = getFormValue('conclusionTecnico');
+        empresa.montoAfavor = getFormValue('montoAfavor');
+        empresa.montoEnContra = getFormValue('montoEnContra');
+        empresa.estadoFinalCierre = getFormValue('estadoFinalCierre');
+    }
+
+    console.log(empresa);
+
+    if (empresa.id !== "") {
+        const successHandler = (result) => {
+            //document.getElementById('tableBody-usuarios').innerHTML = '';
+            GetData();
+            //alert('Se envió con éxito');
+            form.classList.remove('blur');
+            loadingCharge(botonLoading, botonOriginal);
+            //launchConfetti();
+            //form.reset();
+            document.getElementById('offcanvasRight').classList.remove('show')
         };
 
-        console.log(empresa);
-
-        if (empresa.id !== "") {
-            const successHandler = (result) => {
-                //document.getElementById('tableBody-usuarios').innerHTML = '';
-                form.reset();
-            };
-            
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            if (selectedTable === 'regulares-outlined') {
                 google.script.run.withSuccessHandler(successHandler).guardarFormulario(empresa);
             } else {
-                console.error('google.script.run is not available. Ensure the script is running in a Google Apps Script environment.');
-                alert('Error: Unable to save data. Please ensure the script is running in a Google Apps Script environment.');
+                google.script.run.withSuccessHandler(successHandler).guardarFormularioCierre(empresa);
+
             }
         } else {
-            alert('Error en la validación del formulario');
+            console.error('google.script.run is not available. Ensure the script is running in a Google Apps Script environment.');
+            alert('Error: Unable to save data. Please ensure the script is running in a Google Apps Script environment.');
         }
+    } else {
+        alert('Error en la validación del formulario');
     }
+  }
 </script>

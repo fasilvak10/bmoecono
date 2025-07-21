@@ -1,8 +1,9 @@
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasRight"
   aria-labelledby="offcanvasRightLabel">
 
-  <div class="offcanvas-header">
-    <h1 class="modal-title fs-5 pe-3" id="tipoTramite">Inscripcion</h1>
+  <div class="offcanvas-header text-bg-primary" style="font-family: 'Space Mono', monospace;">
+    <h1 class="modal-title fs-5 pe-3" id="tramite">Inscripcion</h1>
+    <!-- <h1 id="nombreEmpresa" class="modal-title fs-5 pe-3 text-align-center">Empresa</h2> -->
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
 
@@ -11,7 +12,8 @@
     <div class="container-fluid p-0 d-flex flex-column justify-content-center align-items-center w-100">
 
 
-      <div id="" class="justify-content-center text-center">
+      <div id="" class="justify-content-center text-center text-bg-primary-subtle"
+        style="font-family: 'Space Mono', monospace;">
         <h2 id="nombreEmpresa" class="mb-3">Empresa</h2>
         <!-- <hr class="d-flex"> -->
         <!--         <div class="d-flex justify-content-around">
@@ -26,21 +28,42 @@
         </div> -->
       </div>
 
-      <form class="mt-2" name="crearUsuario" id="crearUsuario" style="text-center">
+      <form class="mt-2" name="crearUsuario" id="crearUsuario" style="text-center;">
 
         <input type="text" class="form-control" placeholder="#" aria-label="empresaID" name="empresaID" id="empresaID" hidden>
-        <input type="tezt" class="bt-2" id="cuit" name="cuit" hidden>cuit</p>
-        <input type="text" id="expediente" name="expediente" hidden>expediente</p>
+
+        <div class="d-flex justify-content-center align-items-center">
+          <input type="text" id="cuit" name="cuit" class="me-1 border-0" hidden>
+          <!-- <input type="text" id="expediente" name="expediente" class="border-0" hidden> -->
+        </div>
 
         <div class="form-floating form-control-sm">
-          <select class="form-select" aria-label="actividad" id="actividad" name="actividad">
+          <select class="form-select" aria-label="analista" id="analista" name="analista">
               <option value="Software y servicios informáticos y digitales">Software y servicios informáticos y digitales</option>
               <option value="Biotecnología">Biotecnología</option>
+              <option value=""></option>
+          </select>
+          <label for="analista">Evaluador/a</label>
+        </div>
+
+        <div class="form-floating form-control-sm mt-2 tramite-regular">
+          <select class="form-select" aria-label="actividad" id="actividad" name="actividad">
               <option value=""></option>
             </select>
           <label for="actividad">Actividad Principal</label>
         </div>
 
+        <div class="form-floating form-control-sm mt-2">
+          <input type="text" class="form-control form-control-sm" id="expediente" name="expediente" disabled >
+          <label for="expediente">Expediente</label>
+        </div>
+
+        <div class="form-floating form-control-sm mt-2 tramite-cierre" hidden>
+          <select class="form-select" aria-label="cuerpoAuditor" id="cuerpoAuditor" name="cuerpoAuditor">
+              <option value=""></option>
+            </select>
+          <label for="cuerpoAuditor">Cuerpo Auditor</label>
+        </div>
 
         <div class="row g-2 mt-2" id="">
           <div class="col-md">
@@ -57,8 +80,7 @@
           </div>
         </div>
 
-
-        <div id="conciliacionesHidden" hidden>
+        <div id="conciliacionesHidden tramite-cierre" hidden>
           <p class="ps-3 text-center">Conciliaciones</p>
           <div class="form-floating form-control-sm">
             <input type="text" class="form-control" id="conciTasa" aria-label="conciTasa" name="conciTasa" disabled >
@@ -86,7 +108,7 @@
             </div>
           </div>
 
-          <div class="col-4">
+          <div class="col-4 tramite-regular">
             <div class="form-floating form-control-sm">
               <select class="form-select "  aria-label="tamanio" id="tamanio" name="tamanio">
                     <option value=""></option>
@@ -116,8 +138,8 @@
         </div>
 
 
-        <div class="form-floating form-control-sm mb-3" hidden>
-          <select class="form-select mb-3"  aria-label="conclusion" id="conclusion" name="conclusion">
+        <div class="form-floating form-control-sm mb-3 tramite-cierre" hidden>
+          <select class="form-select mb-3"  aria-label="observacionAuditoria" id="observacionAuditoria" name="observacionAuditoria">
                     <option value=""></option>
                     <option value="Sin información">Sin información</option>
                     <option value="Ajuste monetario">Ajuste monetario</option>
@@ -127,91 +149,22 @@
 
 
                   </select>
-          <label for="conclusion" >Conclusion Auditoria</label>
+          <label for="observacionAuditoria" >Conclusion Auditoria</label>
         </div>
 
-        <div class="row g-1 mb-2">
-          <div class="col-md">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="masaSalarial" name="masaSalarial">
-              <label for="">Masa Salarial Promovida</label>
-            </div>
-          </div>
-
-          <div class="col-4">
-            <div class="form-floating form-control-sm">
-              <input type="number" class="form-control" id="nomina" name="nomina" >
-              <label for="">Nómina Promovida</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-2 mb-2">
-          <div class="col-md-12">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="ventasTotales" name="ventasTotales">
-              <label for="ventasTotales">Ventas Totales</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-2 mb-2">
-          <div class="col-md-12">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="ventasPromo" name="ventasPromo" onchange="calcularPorcentajeExpo(this.value, document.getElementById('exportaciones').value, document.getElementById('porcentajeExpoCalculado'))">
-              <label for="ventasPromo">Ventas Promovidas</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-2 mb-2">
-          <div class="col-md-12">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="exportaciones" name="exportaciones" onchange="calcularPorcentajeExpo(document.getElementById('ventasPromo').value, this.value, document.getElementById('porcentajeExpoCalculado'))">
-              <label for="exportaciones">Exportaciones Promovidas</label>
-            </div>
-          </div>
-        </div>
-
-        <div id="porcentajeExpoCalculado" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
-
-        <div id="expobienal-hidden" class="row g-2 mb-2" hidden>
-
-          <p class="text-center">Ventas y Exportaciones Segundo Año</p>
-          <div class="col-md-12">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="ventasanio02" name="ventasanio02">
-              <label for="ventasanio02">Ventas Año 2</label>
-            </div>
-          </div>
-
-
-          <div class="col-md-12">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="ventasPromoanio2" name="ventasPromoanio2" onchange="calcularPorcentajeExpo(this.value, document.getElementById('exportacionesanio2').value, document.getElementById('porcentajeExpoCalculadoAnio2'))">
-              <label for="ventasPromoanio2">Ventas Promovidas Año 2</label>
-            </div>
-          </div>
-
-
-          <div class="col-md-12">
-            <div class="form-floating form-control-sm">
-              <input type="text" class="form-control" id="exportacionesanio2" name="exportacionesanio2" onchange="calcularPorcentajeExpo(document.getElementById('ventasPromoanio2').value, this.value, document.getElementById('porcentajeExpoCalculadoAnio2'))">
-              <label for="exportacionesanio2">Exportaciones Promovidas Año 2</label>
-            </div>
-          </div>
-
-          <div id="porcentajeExpoCalculadoAnio2" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
-        </div>
-
-        <div id="requisitosAdicionales" hidden>
-
-          <p class="text-center">Requisitos Adicionales</p>
-          <div class="row g-2 mb-2">
-            <div class="col-md-12">
+        <div class="tramite-regular">
+          <div class="row g-1 mb-2">
+            <div class="col-md">
               <div class="form-floating form-control-sm">
-                <input type="text" class="form-control" id="capacitacion" name="capacitacion">
-                <label for="capacitacion">Inversión en Capacitación</label>
+                <input type="text" class="form-control" id="masaSalarial" name="masaSalarial">
+                <label for="">Masa Salarial Promovida</label>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div class="form-floating form-control-sm">
+                <input type="number" class="form-control" id="nomina" name="nomina" >
+                <label for="">Nómina Promovida</label>
               </div>
             </div>
           </div>
@@ -219,15 +172,94 @@
           <div class="row g-2 mb-2">
             <div class="col-md-12">
               <div class="form-floating form-control-sm">
-                <input type="text" class="form-control" id="imasd" name="imasd">
-                <label for="imasd">Inversión en I+D</label>
+                <input type="text" class="form-control" id="ventasTotales" name="ventasTotales">
+                <label for="ventasTotales">Ventas Totales</label>
               </div>
             </div>
           </div>
 
+          <div class="row g-2 mb-2">
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="ventasPromo" name="ventasPromo" onchange="calcularPorcentajeExpo(this.value, document.getElementById('exportaciones').value, document.getElementById('porcentajeExpoCalculado'))">
+                <label for="ventasPromo">Ventas Promovidas</label>
+              </div>
+            </div>
+          </div>
 
-          <div class="form-floating form-control-sm mb-2">
-            <select class="form-select"  aria-label="calidadTipo" id="calidadTipo" name="calidadTipo">
+          <div class="row g-2 mb-2">
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="exportaciones" name="exportaciones" onchange="calcularPorcentajeExpo(document.getElementById('ventasPromo').value, this.value, document.getElementById('porcentajeExpoCalculado'))">
+                <label for="exportaciones">Exportaciones Promovidas</label>
+              </div>
+            </div>
+          </div>
+
+          <div id="porcentajeExpoCalculado" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
+
+          <div id="expobienal-hidden" class="row g-2 mb-2" hidden>
+
+            <p class="text-center">Ventas y Exportaciones Segundo Año</p>
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="ventasanio02" name="ventasanio02">
+                <label for="ventasanio02">Ventas Año 2</label>
+              </div>
+            </div>
+
+
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="ventasPromoanio2" name="ventasPromoanio2" onchange="calcularPorcentajeExpo(this.value, document.getElementById('exportacionesanio2').value, document.getElementById('porcentajeExpoCalculadoAnio2'))">
+                <label for="ventasPromoanio2">Ventas Promovidas Año 2</label>
+              </div>
+            </div>
+
+
+            <div class="col-md-12">
+              <div class="form-floating form-control-sm">
+                <input type="text" class="form-control" id="exportacionesanio2" name="exportacionesanio2" onchange="calcularPorcentajeExpo(document.getElementById('ventasPromoanio2').value, this.value, document.getElementById('porcentajeExpoCalculadoAnio2'))">
+                <label for="exportacionesanio2">Exportaciones Promovidas Año 2</label>
+              </div>
+            </div>
+
+            <div id="porcentajeExpoCalculadoAnio2" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
+          </div>
+
+
+
+          <!-- MM3A -->
+
+          <div id="requisitosAdicionales" hidden>
+
+            <div id="" class="form-check form-switch form-check-reverse mb-3">
+              <input class="form-check-input" type="checkbox" id="microMenor" onchange="requisitosMicroMenor(this, document.getElementById('flex-dato-microMenor'))">
+              <label class="form-check-label" for="microMenor">Micro Menor a 3 Años</label>
+            </div>
+
+            <p class="text-center">Requisitos Adicionales</p>
+            <div class="row g-2 mb-2">
+              <div class="col-md-12">
+                <div class="form-floating form-control-sm">
+                  <input type="text" class="form-control" id="capacitacion" name="capacitacion">
+                  <label for="capacitacion">Inversión en Capacitación</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-md-12">
+                <div class="form-floating form-control-sm">
+                  <input type="text" class="form-control" id="imasd" name="imasd">
+                  <label for="imasd">Inversión en I+D</label>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="form-floating form-control-sm mb-2">
+              <select class="form-select"  aria-label="calidadTipo" id="calidadTipo" name="calidadTipo">
                     <option value=""></option>
                     <option value="Certificación de Calidad por Competencia del Personal afectados a actividades promovidas">Certificación de Calidad por Competencia del Personal afectados a actividades promovidas</option>
                     <option value="Certificación de Norma de Calidad">Certificación de Norma de Calidad</option>
@@ -238,23 +270,23 @@
 
 
                   </select>
-            <label for="calidadTipo" >Tipo de Calidad</label>
-          </div>
+              <label for="calidadTipo" >Tipo de Calidad</label>
+            </div>
 
-          <div class="form-floating form-control-sm mb-2">
-            <select class="form-select"  aria-label="calidadEstado" id="calidadEstado" name="calidadEstado">
+            <div class="form-floating form-control-sm mb-2">
+              <select class="form-select"  aria-label="calidadEstado" id="calidadEstado" name="calidadEstado">
                     <option value=""></option>
                     <option value="En proceso">En proceso</option>
                     <option value="Implementada">Implementada</option>
                     <option value="Sin información">Sin información</option>
 
                   </select>
-            <label for="calidadEstado" >Estado Calidad</label>
+              <label for="calidadEstado" >Estado Calidad</label>
+            </div>
+
           </div>
 
         </div>
-
-
 
         <div class="form-check form-switch form-check-reverse mb-3">
           <input class="form-check-input" type="checkbox" id="flexRevisionLegal" onchange="updateTimestamp(this, document.getElementById('fechaRevisionLegal'),document.getElementById('revisorRealLegal'))">
@@ -268,17 +300,17 @@
         </div>
 
         <div class="form-check form-switch form-check-reverse mb-3">
-          <input class="form-check-input" type="checkbox" id="flexRevisionFinal" onchange="updateTimestamp(this, document.getElementById('fecha1278now'), document.getElementById('revisorRealFinal'))">
+          <input class="form-check-input" type="checkbox" id="flexRevisionFinal" onchange="updateTimestamp(this, document.getElementById('fechaRevisionFinal'), document.getElementById('revisorRealFinal'))">
           <label class="form-check-label" for="flexRevisionFinal">Revisado Final</label>
           <div class="d-flex flex-row-reverse">
             <div id="revisorRealFinal" name="revisorRealFinal" class="form-text ms-1"></div>
             <div id="revisorFinal" name='revisorFinal' class="form-text"></div>
           </div>
-          <div id="fecha1278now" name='fecha1278now' class="form-text"></div>
+          <div id="fechaRevisionFinal" name='fechaRevisionFinal' class="form-text"></div>
         </div>
 
         <div class="form-floating form-control-sm mb-2">
-          <input type="text" class="form-control" id="iftecnico" name="iftecnico" >
+          <input type="text" class="form-control" id="iftecnico" name="iftecnico" required>
           <label for="iftecnico">IF Informe Tecnico</label>
         </div>
 
@@ -316,7 +348,45 @@
               <label id="labelFechaInscripcion" for="fechaInscripcion">Fecha Inscripción</label>
             </div>
           </div>
+          <div id="" class="col-3 tramite-cierre" hidden>
+            <div class="col form-floating form-control-sm">
+              <input type="number" class="form-control" id="cantidadDiasProvi" name="cantidadDiasProvi" onchange="calculate(document.getElementById('fechaProviCierre').value, this.value, document.getElementById('fechaVencimientoPlazo'))" >
+              <label for="cantidadDiasProvi">Días Plazo</label>
+            </div>
+          </div>
         </div>
+
+        <div id="fechaVencimientoPlazo" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
+
+
+
+        <div class="form-floating form-control-sm mb-2 tramite-cierre" hidden>
+          <select class="form-select mb-3"  aria-label="conclusionTecnico" id="conclusionTecnico" name="conclusionTecnico">
+                    <option value=""></option>
+                    <option value="Normal Cumplimiento">Normal Cumplimiento</option>
+                    <option value="En Incumplimiento">En Incumpimiento</option>
+                  </select>
+          <label for="conclusionTecnico">Conclusión Informe de Cierre</label>
+        </div>
+
+
+        <p class="text-center tramite-cierre" hidden>Información de Ajuste en Bonos de Crédito Fiscal</p>
+
+        <div class="row g-2 tramite-cierre" hidden>
+          <div class="col-md">
+            <div class="col form-floating form-control-sm">
+              <input type="text" class="form-control" id="montoAfavor" name="montoAfavor" onchange="calcularResultadoAjuste(this.value, document.getElementById('montoEnContra').value, document.getElementById('montoConsolidadoAjuste'))">
+              <label for="montoAfavor">Monto a favor Empresa</label>
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="col form-floating form-control-sm">
+              <input type="text" class="form-control" id="montoEnContra" name="montoEnContra" onchange="calcularResultadoAjuste(document.getElementById('montoAfavor').value, this.value, document.getElementById('montoConsolidadoAjuste'))" >
+              <label for="montoEnContra">Monto en contra Empresa</label>
+            </div>
+          </div>
+        </div>
+        <div id="montoConsolidadoAjuste" class="form-text mb-3 d-flex justify-content-end pe-2"></div>
 
         <div id="" class="form-check form-switch form-check-reverse mb-3">
           <input class="form-check-input" type="checkbox" id="flex-emision" onchange="updateTimestamp(this, document.getElementById('flex-dato-emision'))">
@@ -335,6 +405,18 @@
           <label for="observaciones">Observaciones</label>
         </div>
 
+        <div class="form-floating form-select-sm mb-3 tramite-cierre" hidden>
+          <select class="form-select mb-3"  aria-label="estadoFinalCierre" id="estadoFinalCierre" name="estadoFinalCierre">
+                    <option value=""></option>
+                    <option value="Allanado">Allanado</option>
+                    <option value="Allanado con Observaciones">Allanado con Observaciones</option>
+                    <option value="No Allanado">No Allanado</option>
+                    <option value="Saldo a disponibilizar">Saldo a disponibilizar</option>
+                    <option value="Sin Ajuste">Sin Ajuste</option>
+                  </select>
+          <label for="estadoFinalCierre">Estado Final Cierre</label>
+        </div>
+
       </form>
 
 
@@ -342,14 +424,37 @@
 
   </div>
 
-  <div class="offcanvas-footer p-4 d-flex row align-items-center g-2" style="font-size: 0.8em">
-    <button type="button" class="btn btn-sm btn-primary" onclick="validarFormulario()" id="guardarUsuario0">Guardar</button>
-    <button class="btn btn-primary d-none btnLoading" type="button"     disabled id="LoadingButton0" >
+  <div class="offcanvas-footer p-4 d-flex row align-items-center g-2 dropup"
+    style="font-size: 0.8em; font-family: 'Space Mono', monospace;">
+    <button type="button" class="btn btn-sm btn-primary" onclick="validarFormulario(this, document.getElementById('LoadingButton0'))" id="guardarUsuario0">Guardar</button>
+    <button class="btn btn-sm btn-primary d-none btnLoading" type="button"     disabled id="LoadingButton0" >
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Loading...
-        </button>
-    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" id="" role="button" onclick="crearArchivos(document.getElementById('crearUsuario'))"> <i class="bi bi-layers-fill"></i></button>
-    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" onclick="abrirEnlace(this)" id="carpetaEmpresaAcceso" href="https://lanacion.com"><i class="bi bi-folder-fill button-folder" role="button" ></i></button>
+    </button>
+
+
+
+    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" data-bs-toggle="dropdown" aria-expanded="false" >
+        <i class="bi bi-layers-fill"></i>
+    </button>
+    <ul class="dropdown-menu" id="dropdownModelos" style="font-size: 0.8em;">
+
+    </ul>
+
+
+    <button type="button" class="btn btn-sm btn-outline-secondary button-edit" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-folder-fill button-folder"></i>
+      </button>
+    <ul class="dropdown-menu" id="dropdownArchivos" style="font-size: 0.8em;">
+
+    </ul>
+
+
+
+    <!--     <a id="carpetaEmpresa" href="#" class="btn btn-sm btn-outline-secondary button-edit" target="_blank" onclick="">
+      <i class="bi bi-folder-fill button-folder"></i>
+    </a> -->
+
   </div>
 
   <div class="resize-bar"></div> <!-- Barra de arrastre -->

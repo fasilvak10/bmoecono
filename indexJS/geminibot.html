@@ -1,19 +1,79 @@
 <script>
     var chatHistory = [];
+
+    let currentTypedInstance = null;
+
     document.addEventListener('DOMContentLoaded', () => {
         const chatbotContainer = document.getElementById('chatbot-container');
         const chatbotMinimize = document.getElementById('chatbot-minimize');
         const userInput = document.getElementById('user-input');
         const typingIndicator = document.getElementById('typing-indicator');
         const chatbotBody = document.getElementById('chatbot-body');
+        const sendSound = document.getElementById('send-sound');
+        const receiveSound = document.getElementById('receive-sound');
+        const scrollToBottomBtn = document.getElementById('scroll-to-bottom');
+        const stopTypingBtn = document.getElementById('stop-typing');
+
+        let chatHistory = [];
+        let geminiMessageIdCounter = 0;
+        let typingInterval = null;
+        let bienvenidaMostrada = false;
+        let userIsScrolling = false;
 
         chatbotContainer.style.display = 'none';
         chatbotMinimize.style.display = 'block';
+
+        chatbotMinimize.addEventListener('click', toggleChatbot);
+
+        chatbotContainer.addEventListener('click', (event) => {
+            if (event.target.matches('.btn-close')) closeChatbot();
+            if (event.target.matches('.btn-minimize')) minimizeChatbot();
+            if (event.target.matches('.btn-send')) sendMessage();
+        });
+
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') sendMessage();
+        });
+
+        chatbotBody.addEventListener('scroll', () => {
+            const tolerance = 80;
+            const distanceFromBottom = chatbotBody.scrollHeight - chatbotBody.scrollTop - chatbotBody.clientHeight;
+            userIsScrolling = distanceFromBottom > tolerance;
+            scrollToBottomBtn.classList.toggle('d-none', !userIsScrolling);
+        });
+
+        scrollToBottomBtn.addEventListener('click', () => {
+            chatbotBody.scrollTo({ top: chatbotBody.scrollHeight, behavior: 'smooth' });
+            scrollToBottomBtn.classList.add('d-none');
+        });
+
+        stopTypingBtn.addEventListener('click', () => {
+            if (currentTypedInstance) {
+                currentTypedInstance.destroy();
+                clearInterval(typingInterval);
+
+                const lastGemini = chatHistory.filter(msg => msg.sender === 'Alec').slice(-1)[0];
+                if (lastGemini) {
+                    const lastMessageId = `gemini-msg-${geminiMessageIdCounter - 1}`;
+                    const el = document.getElementById(lastMessageId);
+                    if (el) el.innerHTML = formatearRespuestaIA(lastGemini.message);
+                }
+
+                stopTypingBtn.style.display = 'none';
+            }
+        });
 
         function toggleChatbot() {
             const isHidden = chatbotContainer.style.display === 'none';
             chatbotContainer.style.display = isHidden ? 'block' : 'none';
             chatbotMinimize.style.display = isHidden ? 'none' : 'block';
+
+            if (isHidden && !bienvenidaMostrada) {
+                const bienvenida = "¡Hola! 👋 ¿En qué puedo ayudarte hoy?";
+                addMessage('Alec', bienvenida);
+                chatHistory.push({ sender: 'ALEC', message: bienvenida });
+                bienvenidaMostrada = true;
+            }
         }
 
         function minimizeChatbot() {
@@ -21,56 +81,92 @@
             chatbotMinimize.style.display = 'block';
         }
 
+        function closeChatbot() {
+            chatbotContainer.style.display = 'none';
+            chatbotMinimize.style.display = 'block';
+            chatbotBody.innerHTML = '';
+            chatHistory = [];
+            geminiMessageIdCounter = 0;
+            bienvenidaMostrada = false;
+        }
+
         function sendMessage() {
             const message = userInput.value.trim();
-            if (message) {
-                addMessage('Usuario', message);
-                userInput.value = '';
+            if (!message) return;
 
-                // Guardar el mensaje del usuario en el historial
-                chatHistory.push({ sender: 'Usuario', message });
-                console.log("Historial actualizado (usuario):", chatHistory); // Ver historial actualizado
+            addMessage('Usuario', message);
+            userInput.value = '';
+            chatHistory.push({ sender: 'Usuario', message });
 
-                typingIndicator.classList.remove('d-none');
+            typingIndicator.classList.remove('d-none');
+            sendSound?.play();
 
-                google.script.run
-                    .withSuccessHandler((response) => {
-                        typingIndicator.classList.add('d-none');
-                        addMessage('Gemini', response);
-
-                        // Actualizar historial
-                        chatHistory.push({ sender: 'Gemini', message: response });
-                    })
-                    .withFailureHandler((error) => {
-                        typingIndicator.classList.add('d-none');
-                        addMessage('Error', 'Ocurrió un problema al obtener la respuesta.');
-                        console.error(error);
-                    })
-                    .getRespuestaGemini(message, chatHistory);
-
-            }
+            google.script.run
+                .withSuccessHandler((response) => {
+                    typingIndicator.classList.add('d-none');
+                    addMessage('Alec', response);
+                    chatHistory.push({ sender: 'Alec', message: response });
+                })
+                .withFailureHandler((error) => {
+                    typingIndicator.classList.add('d-none');
+                    addMessage('Error', 'Ocurrió un problema al obtener la respuesta.');
+                    console.error(error);
+                })
+                .getRespuestaGemini(message, chatHistory);
         }
 
         function addMessage(sender, message) {
             const messageElement = document.createElement('div');
             messageElement.className = 'mb-2';
-            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            chatbotBody.appendChild(messageElement);
-            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+
+            if (sender === 'Alec') {
+                const messageId = `gemini-msg-${geminiMessageIdCounter++}`;
+                messageElement.innerHTML = `<strong>${sender}:</strong> <span id="${messageId}"></span>`;
+                chatbotBody.appendChild(messageElement);
+                scrollSmooth();
+
+                const mensajeFormateado = formatearRespuestaIA(message);
+                typingInterval = setInterval(scrollSmooth, 100);
+
+                currentTypedInstance = new Typed(`#${messageId}`, {
+                    strings: [mensajeFormateado],
+                    typeSpeed: 20,
+                    showCursor: false,
+                    contentType: 'html',
+                    onComplete: () => {
+                        clearInterval(typingInterval);
+                        scrollSmooth();
+                        receiveSound?.play();
+                        stopTypingBtn.style.display = 'none';
+                    }
+                });
+
+                stopTypingBtn.style.display = 'inline-block';
+
+            } else {
+                messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+                chatbotBody.appendChild(messageElement);
+                scrollSmooth();
+            }
         }
 
-        chatbotMinimize.addEventListener('click', toggleChatbot);
-        chatbotContainer.addEventListener('click', (event) => {
-            if (event.target.matches('.btn-close')) toggleChatbot();
-            if (event.target.matches('.btn-minimize')) minimizeChatbot();
-            if (event.target.matches('.btn-send')) sendMessage();
-        });
-        userInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') sendMessage();
-        });
+        function scrollSmooth() {
+            if (!userIsScrolling) {
+                chatbotBody.scrollTo({ top: chatbotBody.scrollHeight, behavior: 'smooth' });
+            }
+        }
     });
 
-
-
+    function formatearRespuestaIA(texto) {
+           texto = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+           texto = texto.replace(/(^|\s)\*(.*?)\*/g, '$1<em>$2</em>');
+           texto = texto.replace(/\* (.+)/g, '<li>$1</li>');
+           if (texto.includes('<li>')) {
+               texto = texto.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+           }
+           texto = texto.replace(/\n{2,}/g, '<br><br>');
+           texto = texto.replace(/\n/g, '<br>');
+        return texto;
+    }    
 
 </script>

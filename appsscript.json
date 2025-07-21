@@ -7,6 +7,19 @@
         "version": "0",
         "libraryId": "1JTuZkovO3aSOC0ZZhQEKOByth_CIGwkvFspi3OJ6MfkvVnJbEi0p-K-0",
         "developmentMode": true
+      },
+      {
+        "userSymbol": "indice_tramites_lec",
+        "version": "0",
+        "libraryId": "1MJRMiQ8aqOIsRXjBpl_ouKQbMaOpndXEMIE_uPHQV1Io3EwZ0O52ScMz",
+        "developmentMode": true
+      }
+    ],
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Docs",
+        "version": "v1",
+        "serviceId": "docs"
       }
     ]
   },

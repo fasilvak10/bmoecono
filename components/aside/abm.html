@@ -1,0 +1,97 @@
+<button type="button" class="btn-custom  text-start mt-1" data-bs-toggle="modal" data-bs-target="#abmUser"><i class="bi bi-people"></i>  Usuarios ABM</button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="abmUser" data-bs-backdrop="false" data-bs-keyboard="true" tabindex="-1"
+  aria-labelledby="abmUser" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">abm usuarios</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body" style="font-size: 0.90em">
+        <div class="row p-3">
+
+          <!-- Usuarios - Sección de tarjetas -->
+          <div class="col-sm">
+
+            <form class="p-3" role="search">
+
+              <input class="form-control mb-2" type="search" placeholder="Agentes" aria-label="Search">
+              <div class="d-flex justify-content-end">
+                <button onclick="filtrarEquipo('tecnico')" class="badge rounded-pill text-bg-secondary me-2">tecnico</button>
+                <button onclick="filtrarEquipo('legal')" class="badge rounded-pill text-bg-secondary me-2">legal</button>
+                <button onclick="filtrarEquipo('contable')" class="badge rounded-pill text-bg-secondary me-2">contable</button>
+                <button onclick="filtrarEquipo('sistemas')" class="badge rounded-pill text-bg-secondary me-2">sistemas</button>
+                <button onclick="filtrarEquipo('todos')" class="badge rounded-pill text-bg-primary me-2">todos</button>
+              </div>
+
+            </form>
+
+
+
+            <div class="d-flex flex-column mb-3 p-3 scrollable-cards ">
+              <div id="card"></div>
+            </div>
+          </div>
+
+          <!-- Formulario -->
+          <div class="col-sm-5 p-3 text-bg-light rounded-3 border boder-1">
+            <div class="d-flex align-items-center justify-content-center p-3 mb-1 h-100">
+              <form class="text-center w-100 position-relative">
+
+                <h5 id="formTitle" class="mb-5">Usuarios</h5>
+                
+                <div class="form-floating mb-4">
+                  <select class="form-select" id="exampleFormControlSelect1" aria-label="Equipo">
+                    <option selected disabled></option>
+                    <option>Analista</option>
+                    <option>Legal</option>
+                    <option>Contable</option>
+                    <option>Sistema</option>
+                  </select>
+                  <label for="exampleFormControlSelect1"><strong>Equipo</strong></label>
+                </div>
+                <div class="form-floating mb-4">
+                  <select class="form-select" id="exampleFormControlSelect2" aria-label="Función">
+                    <option selected disabled></option>
+                    <option>User</option>
+                    <option>Admin</option>
+                  </select>
+                  <label for="exampleFormControlSelect2"><strong>Función</strong></label>
+                </div>
+                <div class="form-floating mb-4">
+                  <select class="form-select" id="exampleFormControlSelect3" aria-label="Estado">
+                    <option selected disabled></option>
+                    <option>Activo</option>
+                    <option>Baja</option>
+                  </select>
+                  <label for="exampleFormControlSelect3"><strong>Estado</strong></label>
+                </div>
+
+                <button type="button" class="btn btn-secondary w-50 mb-3">Guardar</button>
+
+                <div class="dropdown bottom-0 end-0 me-3 mb-3">
+                  <button class="btn btn-light dropdown-toggle p-2" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-plus-circle-fill" style="font-size: 1.5rem; color: #adb5bd $gray-300;"></i>
+        </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Agregar Usuario</a></li>
+                    <li><a class="dropdown-item" href="#">Modificar Usuario</a></li>
+                  </ul>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>

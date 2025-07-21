@@ -1,0 +1,194 @@
+<script>
+  
+  // Funciones para manejar el pseudo-modal
+  function mostrarPseudoModal(id) {
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function cerrarPseudoModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  const filtroDateasEmpresa = document.getElementById("filtro-empresa-dateas");
+  
+  filtroDateasEmpresa.addEventListener("change", () => {
+    
+    const empresa = filtroDateasEmpresa.value;
+    llenarFormulario(empresa);
+  });
+  
+  function llenarFormulario(empresa) {
+    var contenedorFormularios = document.getElementById('contenedor-formularios');
+    contenedorFormularios.innerHTML = '';
+    var formularioTemplate = document.getElementById('formulario-template');
+
+    const data = dataRegular.additionalData;
+  
+    const dateasFiltrado = data.filter(item => item.empresa === empresa);
+    
+    const razonEmpresa = document.getElementById("razon-dateas");
+    razonEmpresa.innerHTML = empresa;
+
+    const cuit = document.getElementById("cuit-dateas");
+    cuit.innerHTML = `Cuit ${dateasFiltrado[0].cuit}`;   
+    const match = dataRegistro.find(r => r[0] === dateasFiltrado[0].cuit);
+    
+    const datosEncontrados = match ? [match[1],match[2],match[3],match[4],match[5],match[6],match[7],match[8]]: [null,null,null,null,null,null,null,null];
+    console.log(datosEncontrados) 
+    document.getElementById("rl-dateas").innerHTML = datosEncontrados[0];
+    document.getElementById("fechaInscripcion-dateas").innerHTML = `Fecha de Inscripción: ${datosEncontrados[4]}` 
+    document.getElementById("periodoAnalisis").innerHTML = `Periodo: ${datosEncontrados[1]}`;
+    document.getElementById("acto-dateas").innerHTML = `Acto: ${datosEncontrados[2]} N° ${datosEncontrados[3]}`;
+    
+    document.getElementById("provincia-dateas").innerHTML = `${datosEncontrados[5]}`;
+    document.getElementById("correo-dateas").innerHTML = `correo: ${datosEncontrados[6]}`;
+    document.getElementById("ulactividad-dateas").innerHTML = `${datosEncontrados[7]}`;
+
+    
+    dateasFiltrado.forEach(function(presentacion, index) {
+      const formularioClone = formularioTemplate.content.cloneNode(true);
+
+      const expediente = formularioClone.querySelector('.expediente-dateas'); 
+      const tramite = formularioClone.querySelector('.tramite-dateas'); 
+      const fechaPresentacion = formularioClone.querySelector('.presentacion-dateas');
+      const fechaPresentacionForm = formularioClone.querySelector('.presentacion-dateas-form');
+    
+      const estado = formularioClone.querySelector('.estado-dateas');
+      const actividad = formularioClone.querySelector('.actividad-dateas');
+      const periodo = formularioClone.querySelector('.periodo-dateas');
+      const periodoForm = formularioClone.querySelector('.periodo-dateas-form');
+      const uniqueID = "flush-collapse-" + index; // ID único
+      
+      const analista = formularioClone.querySelector('.analista-dateas');
+      const legal = formularioClone.querySelector('.legal-dateas');
+      const revisor = formularioClone.querySelector('.revisor-dateas');
+      const fechaInscripcionDateas = formularioClone.querySelector('.fecha-inscripcion-dateas');
+      const tamanio = formularioClone.querySelector('.tamanio-dateas');
+      const microMenor = formularioClone.querySelector('.menor-dateas');
+
+      const ventasTotales = formularioClone.querySelector('.ventasTotales-dateas');
+      const ventasPromo = formularioClone.querySelector('.ventasPromo-dateas');
+      const expoPromo = formularioClone.querySelector('.expoPromo-dateas');
+      const nomina = formularioClone.querySelector('.nomina-dateas');
+      const calidad = formularioClone.querySelector('.calidad-dateas');
+      const estadoCalidad = formularioClone.querySelector('.estadoCalidad-dateas');
+      const imasd = formularioClone.querySelector('.imasd-dateas');
+      const capacitacion = formularioClone.querySelector('.capacitacion-dateas');
+
+      formularioClone.querySelector('.accordion-collapse').id = uniqueID;
+      const accordionButton = formularioClone.querySelector('.accordion-button');
+      accordionButton.setAttribute('aria-controls', uniqueID);
+      accordionButton.setAttribute('data-bs-target', '#' + uniqueID);
+
+      expediente.textContent = presentacion.expediente || '';
+      tramite.textContent = presentacion.tramite || '';
+      fechaPresentacion.textContent = presentacion.fechapresentacion || '';
+      fechaPresentacionForm.textContent = presentacion.fechapresentacion || '';
+
+      analista.textContent = presentacion.analista || '';
+      legal.textContent = presentacion.asesorLegal || '';
+      revisor.textContent = presentacion.revisorFinal || '';
+      fechaInscripcionDateas.textContent = presentacion.fechaInscripcion || '';
+      tamanio.textContent = presentacion.tamanio || '';
+      microMenor.textContent = presentacion.microMenor || '';
+
+      ventasTotales.textContent = presentacion.ventasTotales || '';
+      ventasPromo.textContent = presentacion.ventasPromo || '';
+      expoPromo.textContent = presentacion.exportaciones || '';
+      nomina.textContent = presentacion.nomina || '';
+      calidad.textContent = presentacion.calidadTipo || '';
+      estado.textContent = presentacion.estadoEmpresa || '';
+      estadoCalidad.textContent = presentacion.calidadEstado || '';
+      imasd.textContent = presentacion.imasd || '';
+      capacitacion.textContent = presentacion.capacitacion || '';
+
+      const periodoTexto = `${presentacion.periodoIncial || ''} - ${presentacion.periodoFinal || ''}`;
+      periodo.textContent = periodoTexto;
+      periodoForm.textContent = periodoTexto;
+
+      actividad.textContent = presentacion.actividad || '';
+
+      contenedorFormularios.appendChild(formularioClone);
+    });
+    
+  }
+
+  /* DRAGEABLE PSEUDO-MODAL */
+  function makePseudoModalDraggable(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    
+    const header = modal.querySelector('.modal-header');
+    const dialog = modal.querySelector('.pseudo-modal-dialog');
+    
+    if (!header || !dialog) return;
+    
+    let isDragging = false;
+    let offset = { x: 0, y: 0 };
+
+    // Cambiar el cursor para indicar que se puede arrastrar
+    header.style.cursor = 'move';
+
+    // Cuando el usuario hace clic en el encabezado
+    header.addEventListener('mousedown', (e) => {
+      // Evitar arrastrar al hacer clic en botones dentro del header
+      if (e.target.closest('button')) return;
+      
+      isDragging = true;
+      const rect = dialog.getBoundingClientRect();
+      offset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+      
+      // Cambiar estilos para preparar el arrastre
+      dialog.style.transition = 'none'; // Desactivar transiciones durante el arrastre
+    });
+
+    // Cuando el usuario mueve el ratón
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      // Actualizar posición
+      dialog.style.position = 'fixed';
+      dialog.style.margin = 0;
+      dialog.style.left = `${e.clientX - offset.x}px`;
+      dialog.style.top = `${e.clientY - offset.y}px`;
+      
+      // Asegurar que el diálogo permanezca visible
+      const maxX = window.innerWidth - dialog.offsetWidth;
+      const maxY = window.innerHeight - dialog.offsetHeight;
+      
+      const left = parseInt(dialog.style.left);
+      const top = parseInt(dialog.style.top);
+      
+      if (left < 0) dialog.style.left = '0px';
+      if (top < 0) dialog.style.top = '0px';
+      if (left > maxX) dialog.style.left = `${maxX}px`;
+      if (top > maxY) dialog.style.top = `${maxY}px`;
+    });
+
+    // Cuando el usuario suelta el ratón
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        dialog.style.transition = ''; // Restaurar transiciones
+      }
+    });
+  }
+
+  // Llamar a la función después de que el DOM esté completamente cargado
+  document.addEventListener('DOMContentLoaded', function() {
+    makePseudoModalDraggable('pseudoModalEmpresas');
+  });
+
+
+  /* function toggleHiddenDateas(periodoClass, presentacionClass){
+    const periodoDateas = document.querySelector(periodoClass);
+    const presentacionDateas = document.querySelector(presentacionClass);
+
+    periodoDateas.hidden = !periodoDateas.hidden;
+    presentacionDateas.hidden = !presentacionDateas.hidden;
+  } */
+
+</script>
